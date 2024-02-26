@@ -5,6 +5,9 @@ plugins {
 android {
     compileSdk 34
 
+    buildFeatures {
+        viewBinding true
+    }
     defaultConfig {
         applicationId "com.hangbui.booktrade"
         minSdk 29
