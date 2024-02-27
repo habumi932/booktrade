@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.google.firebase.FirebaseApp;
 import com.hangbui.booktrade.databinding.ActivityLogoutBinding;
 
 public class LogoutActivity extends AppCompatActivity {
@@ -19,6 +20,13 @@ public class LogoutActivity extends AppCompatActivity {
             startActivity(theIntent);
         }
     };
+    private View.OnClickListener button_register_clickListener = new View.OnClickListener() {
+
+        public void onClick(View v) {
+            Intent theIntent = new Intent(LogoutActivity.this, RegisterActivity.class);
+            startActivity(theIntent);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +35,7 @@ public class LogoutActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.buttonLogin.setOnClickListener(button_login_clickListener);
-
+        binding.buttonRegister.setOnClickListener(button_register_clickListener);
     }
 
 
