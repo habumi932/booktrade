@@ -41,8 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("Failure", "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(RegisterActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
+                                if(task.getException() instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException){
+                                    Toast.makeText(RegisterActivity.this, "The email address is already in use.",
+                                            Toast.LENGTH_LONG).show();
+                                }
+
                                 // updateUI(null);
                             }
                         }

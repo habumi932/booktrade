@@ -4,4 +4,7 @@
     <string name="button_register">REGISTER</string>
     <string name="author_name">Hang Bui\nhangbui_2024@depauw.edu</string>
     <string name="author_email">hangbui_2024@depauw.edu</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_university">University</string>
 </resources>
