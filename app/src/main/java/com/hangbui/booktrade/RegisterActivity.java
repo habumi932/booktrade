@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,8 +25,10 @@ public class RegisterActivity extends AppCompatActivity {
     private View.OnClickListener button_register_clickListener = new View.OnClickListener() {
         public void onClick(View v) {
 
-            // TODO: Add input textviews for user registration
-            mAuth.createUserWithEmailAndPassword("hangbm2002@gmail.com", "testpassword")
+            EditText email = (EditText)findViewById(R.id.editText_email);
+            EditText password = (EditText)findViewById(R.id.editText_password);
+
+            mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                     .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
