@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,6 +18,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.hangbui.booktrade.databinding.ActivityRegisterBinding;
+import com.opencsv.CSVReader;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -33,12 +43,11 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
+                                // Sign in success, go to home page
                                 Toast.makeText(RegisterActivity.this, "New user created successfully.",
                                         Toast.LENGTH_LONG).show();
                                 Log.d("Success", "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                // updateUI(user);
                                 Intent theIntent = new Intent(RegisterActivity.this, HomeActivity.class);
                                 startActivity(theIntent);
                             } else {
@@ -48,8 +57,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     Toast.makeText(RegisterActivity.this, "The email address is already in use.",
                                             Toast.LENGTH_LONG).show();
                                 }
-
-                                // updateUI(null);
                             }
                         }
                     });
@@ -64,6 +71,40 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         binding.buttonRegister.setOnClickListener(button_register_clickListener);
+        try {
+            loadUniversities();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "The CSV file failed to load", Toast.LENGTH_LONG).show();
+        }
     }
 
+    private void loadUniversities(){
+        // Read CSV file to get a list of all US universities
+        List<String> allUniversities = new ArrayList<String>();
+        try {
+            InputStream inputStream = getAssets().open("us_universities.csv");
+            Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
+            CSVReader reader = new CSVReader(bReader);
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                String university = nextLine[0];
+                allUniversities.add(university);
+            }
+            // Remove first element which is the column name
+            allUniversities.remove(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "The specified file was not found", Toast.LENGTH_SHORT).show();
+        }
+
+        // Populate spinner with the university names
+        String[] universities = new String[allUniversities.size()];
+        universities = allUniversities.toArray(universities);
+        Spinner uniSpinner = findViewById(R.id.spinner_university);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(RegisterActivity.this,android.R.layout.simple_spinner_item, universities);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uniSpinner.setAdapter(adapter);
+    }
 }
