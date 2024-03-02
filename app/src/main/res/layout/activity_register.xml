@@ -54,10 +54,18 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout_app_name">
 
         <EditText
+            android:id="@+id/editText_name"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/hint_name"
+            android:inputType="text" />
+
+        <EditText
             android:id="@+id/editText_email"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="50dp"
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/hint_email"
@@ -76,7 +84,6 @@
             android:id="@+id/spinner_university"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="50dp"
             android:layout_weight="1" />
     </LinearLayout>
 
