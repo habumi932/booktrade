@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.google.firebase.FirebaseApp;
 import com.hangbui.booktrade.databinding.ActivityLogoutBinding;
 
 public class LogoutActivity extends AppCompatActivity {

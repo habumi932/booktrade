@@ -38,7 +38,6 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityRegisterBinding binding;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private DatabaseReference dbUsers;
 
     private View.OnClickListener button_register_clickListener = new View.OnClickListener() {
         public void onClick(View v) {
