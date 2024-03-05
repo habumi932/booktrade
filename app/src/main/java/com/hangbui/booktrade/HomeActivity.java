@@ -29,8 +29,6 @@ public class HomeActivity extends AppCompatActivity {
                 replaceFragment(new ProfileFragment());
             } else if(itemId == R.id.books) {
                 replaceFragment(new BooksFragment());
-            } else if(itemId == R.id.settings) {
-                replaceFragment(new SettingsFragment());
             }
 
             return true;
