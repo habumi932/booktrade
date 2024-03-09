@@ -6,14 +6,14 @@ public class User {
     private String email;
     private String name;
     private String photoUrl;
-    private String universityId;
+    private String university;
 
     public User(String id, String email, String name, String photoUrl, String universityId) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.photoUrl = photoUrl;
-        this.universityId = universityId;
+        this.university = university;
     }
 
     public String getId() {
@@ -48,12 +48,12 @@ public class User {
         this.photoUrl = photoUrl;
     }
 
-    public String getUniversityId() {
-        return universityId;
+    public String getUniversity() {
+        return university;
     }
 
-    public void setUniversityId(String universityId) {
-        this.universityId = universityId;
+    public void setUniversity(String university) {
+        this.university = university;
     }
 }
 

@@ -125,6 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("id", id);
         user.put("email", email);
         user.put("name", name);
+        user.put("photoUrl", "");
         user.put("university", universityName);
 
         db.collection("users").document(id)

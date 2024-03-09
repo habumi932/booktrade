@@ -2,11 +2,23 @@ package com.hangbui.booktrade;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,10 +27,16 @@ import android.view.ViewGroup;
  */
 public class HomeFragment extends Fragment {
 
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private User currentUser;
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String USERS_TABLE = "users";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -53,12 +71,41 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        String uid = mAuth.getCurrentUser().getUid();
+        currentUser = getCurrentUser(uid);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        TextView welcomeMessage = view.findViewById(R.id.textView_welcome);
+        welcomeMessage.setText("Welcome, " + currentUser.getName());
+        return view;
+    }
+
+    // TODO: Implement getCurrentUser method
+    private User getCurrentUser(String uid) {
+        try {
+//            DocumentReference docRef = db.collection(USERS_TABLE).document(uid);
+//            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                @Override
+//                public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                    currentUser = documentSnapshot.toObject(User.class);
+//                }
+//            });
+//
+//            return currentUser;
+
+            return new User("testId", "testEmail", "Hang Bui", "test", "uni");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("DB", "Error retrieving user from user id: " + uid);
+            return null;
+        }
     }
 }

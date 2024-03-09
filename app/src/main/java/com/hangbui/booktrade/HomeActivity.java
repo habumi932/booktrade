@@ -30,7 +30,6 @@ public class HomeActivity extends AppCompatActivity {
             } else if(itemId == R.id.books) {
                 replaceFragment(new BooksFragment());
             }
-
             return true;
         });
     }
