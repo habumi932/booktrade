@@ -1,5 +1,12 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.USERS_TABLE;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_EMAIL;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_ID;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_NAME;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_PHOTO_URL;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_UNIVERSITY;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -59,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.LENGTH_LONG).show();
                                 Log.d("Success", "createUserWithEmail:success");
                                 FirebaseUser user = mAuth.getCurrentUser();
-                                createUser(user.getUid(), email.getText().toString(), name.getText().toString(), university);
+                                createUser(user.getUid(), email.getText().toString(), name.getText().toString(), "", university);
                                 Intent theIntent = new Intent(RegisterActivity.this, HomeActivity.class);
                                 startActivity(theIntent);
                             } else {
@@ -120,15 +127,15 @@ public class RegisterActivity extends AppCompatActivity {
         uniSpinner.setAdapter(adapter);
     }
 
-    private void createUser(String id, String email, String name, String universityName) {
+    private void createUser(String id, String email, String name, String photoUrl, String universityName) {
         Map<String, Object> user = new HashMap<>();
-        user.put("id", id);
-        user.put("email", email);
-        user.put("name", name);
-        user.put("photoUrl", "");
-        user.put("university", universityName);
+        user.put(USERS_TABLE_COL_ID, id);
+        user.put(USERS_TABLE_COL_EMAIL, email);
+        user.put(USERS_TABLE_COL_NAME, name);
+        user.put(USERS_TABLE_COL_PHOTO_URL, photoUrl);
+        user.put(USERS_TABLE_COL_UNIVERSITY, universityName);
 
-        db.collection("users").document(id)
+        db.collection(USERS_TABLE).document(id)
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
