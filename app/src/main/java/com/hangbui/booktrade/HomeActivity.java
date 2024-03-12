@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 
 import com.hangbui.booktrade.databinding.ActivityHomeBinding;
 
@@ -20,11 +20,13 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeFragment());
+        Intent intent = getIntent();
+        User currentUser = intent.getParcelableExtra(LogoutActivity.EXTRA_CURRENT_USER);
 
         binding.bottomNavigationBar.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if(itemId == R.id.home) {
-                replaceFragment(new HomeFragment());
+                replaceFragment(HomeFragment.newInstance(currentUser));
             } else if(itemId == R.id.profile) {
                 replaceFragment(new ProfileFragment());
             } else if(itemId == R.id.books) {
