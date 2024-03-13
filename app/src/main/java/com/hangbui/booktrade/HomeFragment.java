@@ -1,5 +1,7 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hangbui.booktrade.databinding.FragmentHomeBinding;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +41,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
-        if (getArguments() != null) {
-            currentUser = getArguments().getParcelable(ARG_CURRENT_USER);
-        }
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
     }
 
     @Override

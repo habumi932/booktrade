@@ -23,12 +23,12 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Intent intent = getIntent();
         User currentUser = intent.getParcelableExtra(EXTRA_CURRENT_USER);
-        replaceFragment(HomeFragment.newInstance(currentUser));
+        replaceFragment(new HomeFragment());
 
         binding.bottomNavigationBar.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if(itemId == R.id.home) {
-                replaceFragment(HomeFragment.newInstance(currentUser));
+                replaceFragment(new HomeFragment());
             } else if(itemId == R.id.profile) {
                 replaceFragment(new ProfileFragment());
             } else if(itemId == R.id.books) {

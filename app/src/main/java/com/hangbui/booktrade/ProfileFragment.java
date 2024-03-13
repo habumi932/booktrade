@@ -1,5 +1,7 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,10 +10,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,15 +40,6 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(User user) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -107,11 +102,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            currentUser = getArguments().getParcelable(ARG_CURRENT_USER);
-        }
-        binding = FragmentProfileBinding.inflate(getLayoutInflater());
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
         mAuth = FirebaseAuth.getInstance();
+        if(currentUser == null) {
+            Log.e("ProfileFragment", "Current user is null");
+        }
+        else {
+            Log.d("ProfileFragment", currentUser.getName());
+        }
     }
 
     @Override
@@ -119,10 +117,18 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-       Button logoutButton = view.findViewById(R.id.button_logout);
-       Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
-       logoutButton.setOnClickListener(button_logout_clickListener);
-       deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
        return view;
+    }
+
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        Button logoutButton = view.findViewById(R.id.button_logout);
+        Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
+        logoutButton.setOnClickListener(button_logout_clickListener);
+        deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
+        TextView textViewName = view.findViewById(R.id.textView_name);
+        TextView textViewUniversity = view.findViewById(R.id.textView_university);
+        textViewName.setText(currentUser.getName());
+        textViewUniversity.setText(currentUser.getUniversity());
     }
 }
