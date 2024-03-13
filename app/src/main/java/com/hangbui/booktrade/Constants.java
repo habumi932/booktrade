@@ -1,6 +1,8 @@
 package com.hangbui.booktrade;
 
 public class Constants {
+    // Extras
+    public static String EXTRA_CURRENT_USER = "com.hangbui.booktrade.EXTRA_CURRENT_USER";
     // Users table
     public static String USERS_TABLE = "users";
     public static String USERS_TABLE_COL_ID = "id";

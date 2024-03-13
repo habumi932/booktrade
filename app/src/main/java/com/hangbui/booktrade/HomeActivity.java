@@ -1,5 +1,7 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -20,7 +22,7 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Intent intent = getIntent();
-        User currentUser = intent.getParcelableExtra(LogoutActivity.EXTRA_CURRENT_USER);
+        User currentUser = intent.getParcelableExtra(EXTRA_CURRENT_USER);
         replaceFragment(HomeFragment.newInstance(currentUser));
 
         binding.bottomNavigationBar.setOnItemSelectedListener(item -> {

@@ -1,5 +1,6 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.USERS_TABLE;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_EMAIL;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_NAME;
@@ -24,8 +25,6 @@ import com.hangbui.booktrade.databinding.ActivityLogoutBinding;
 import java.util.Map;
 
 public class LogoutActivity extends AppCompatActivity {
-
-    public static final String EXTRA_CURRENT_USER = "com.hangbui.booktrade.EXTRA_CURRENT_USER";
 
     private ActivityLogoutBinding binding;
 
@@ -65,7 +64,6 @@ public class LogoutActivity extends AppCompatActivity {
         binding.buttonRegister.setOnClickListener(button_register_clickListener);
     }
 
-
     protected void getCurrentUser(String uid) {
         try {
             DocumentReference docRef = db.collection(USERS_TABLE).document(uid);
@@ -77,9 +75,8 @@ public class LogoutActivity extends AppCompatActivity {
                     String email = (String) userData.get(USERS_TABLE_COL_EMAIL);
                     String photoUrl = (String) userData.get(USERS_TABLE_COL_PHOTO_URL);
                     String university = (String) userData.get(USERS_TABLE_COL_UNIVERSITY);
-                    currentUser = new User(uid, email, name, photoUrl, university);
+                    User currentUser = new User(uid, email, name, photoUrl, university);
                     Intent theIntent = new Intent(LogoutActivity.this, HomeActivity.class);
-                    Log.i("LogoutActivity", currentUser.getName());
                     theIntent.putExtra(EXTRA_CURRENT_USER, currentUser);
                     startActivity(theIntent);
                 }
