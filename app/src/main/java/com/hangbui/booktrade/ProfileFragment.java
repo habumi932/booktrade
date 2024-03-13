@@ -128,7 +128,11 @@ public class ProfileFragment extends Fragment {
         deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
         TextView textViewName = view.findViewById(R.id.textView_name);
         TextView textViewUniversity = view.findViewById(R.id.textView_university);
+        TextView textViewNumFriends = view.findViewById(R.id.textView_num_friends);
+        TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         textViewName.setText(currentUser.getName());
         textViewUniversity.setText(currentUser.getUniversity());
+        textViewNumFriends.setText("   0 Friends");
+        textViewNumBooks.setText("   0 Books");
     }
 }

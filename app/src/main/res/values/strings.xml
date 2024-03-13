@@ -4,7 +4,8 @@
     <string name="button_register">REGISTER</string>
     <string name="button_logout">LOG OUT</string>
     <string name="button_delete_account">DELETE ACCOUNT</string>
-    <string name="author_name">Hang Bui\nhangbui_2024@depauw.edu</string>
+    <string name="button_edit_profile">EDIT PROFILE</string>
+    <string name="author_name">by Hang Bui\nhangbui_2024@depauw.edu</string>
     <string name="author_email">hangbui_2024@depauw.edu</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -14,6 +15,4 @@
     <string name="nav_bar_settings">Settings</string>
     <string name="nav_bar_profile">Profile</string>
     <string name="nav_bar_books">Books</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

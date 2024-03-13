@@ -14,7 +14,7 @@
             android:id="@+id/constraintLayout_profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -34,10 +34,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="TextView"
-                android:textSize="20sp"
                 android:fontFamily="@font/comfortaa"
+                android:text="TextView"
                 android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView_photo" />
@@ -46,27 +47,82 @@
                 android:id="@+id/textView_university"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="TextView"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/comfortaa"
+                android:text="TextView"
                 android:textColor="@color/black"
+                android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+
+            <TextView
+                android:id="@+id/textView_num_friends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/comfortaa"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@color/black"
+                app:drawableLeftCompat="@drawable/baseline_groups_24"
+                app:layout_constraintEnd_toStartOf="@+id/textView_num_books"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_university" />
+
+            <TextView
+                android:id="@+id/textView_num_books"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/baseline_book_24"
+                android:fontFamily="@font/comfortaa"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textView_num_friends"
+                app:layout_constraintTop_toTopOf="@+id/textView_num_friends" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout_buttons"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout_profile">
+
+            <Button
+                android:id="@+id/button_edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/black"
+                android:text="@string/button_edit_profile"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout_buttons"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="50dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout_profile">
+            app:layout_constraintStart_toStartOf="parent">
 
             <Button
                 android:id="@+id/button_logout"
