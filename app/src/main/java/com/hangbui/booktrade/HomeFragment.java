@@ -2,10 +2,8 @@ package com.hangbui.booktrade;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,6 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private static final String ARG_CURRENT_USER = "currentUser";
     private User currentUser;
-    private String message;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -43,7 +40,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(getLayoutInflater());
         if (getArguments() != null) {
             currentUser = getArguments().getParcelable(ARG_CURRENT_USER);
-            message = "Welcome, " + currentUser.getName();
         }
     }
 
@@ -52,9 +48,13 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        TextView welcomeMessage = view.findViewById(R.id.textView_welcome);
-        welcomeMessage.setText(message);
         return view;
     }
+
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        TextView welcomeMessage = view.findViewById(R.id.textView_welcome);
+        welcomeMessage.setText("Welcome, " + currentUser.getName());
+    }
+
 }

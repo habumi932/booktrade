@@ -19,9 +19,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new HomeFragment());
         Intent intent = getIntent();
         User currentUser = intent.getParcelableExtra(LogoutActivity.EXTRA_CURRENT_USER);
+        replaceFragment(HomeFragment.newInstance(currentUser));
 
         binding.bottomNavigationBar.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
