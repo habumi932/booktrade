@@ -7,11 +7,14 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.List;
@@ -43,6 +46,13 @@ public class BooksFragment extends Fragment {
             myDialog.show();
         }
     };
+    private View.OnClickListener button_add_book_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            replaceFragment(new AddBookFragment());
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +69,8 @@ public class BooksFragment extends Fragment {
 
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
+        Button buttonAddBook = view.findViewById(R.id.button_add_book);
+        buttonAddBook.setOnClickListener(button_add_book_onClickListener);
         updateListviewBooks(view);
     }
 
@@ -67,5 +79,11 @@ public class BooksFragment extends Fragment {
         ListView listviewBooks = view.findViewById(R.id.listview_books);
         listviewBooks.setOnItemClickListener(listview_books_itemClickListener);
         listviewBooks.setAdapter(adapter);
+    }
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }
