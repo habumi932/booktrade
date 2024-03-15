@@ -3,6 +3,7 @@ package com.hangbui.booktrade;
 public class Constants {
     // Extras
     public static final String EXTRA_CURRENT_USER = "com.hangbui.booktrade.EXTRA_CURRENT_USER";
+    public static final String EXTRA_BOOKS = "com.hangbui.booktrade.EXTRA_BOOKS";
 
     // Users table
     public static final String USERS_TABLE = "users";
@@ -15,5 +16,8 @@ public class Constants {
     // Books table
     public static final String BOOKS_TABLE = "books";
     public static final String BOOKS_TABLE_COL_OWNER_ID = "ownerId";
+
+    // MISC
+    public static final String PADDING = "   ";
 }
 

@@ -37,6 +37,7 @@ public class LogoutActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             User currentUser = documentSnapshot.toObject(User.class);
+                            sendUserToHomeActivity(currentUser);
                         }
                     });
                 } catch (Exception e) {

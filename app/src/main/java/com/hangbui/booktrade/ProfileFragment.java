@@ -1,6 +1,8 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_BOOKS;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+import static com.hangbui.booktrade.Constants.PADDING;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,6 +24,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ProfileFragment#newInstance} factory method to
@@ -32,6 +36,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private static final String ARG_CURRENT_USER = "currentUser";
     private User currentUser;
+    private List<Book> books;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -83,6 +88,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
+        books = getActivity().getIntent().getParcelableArrayListExtra(EXTRA_BOOKS);
         mAuth = FirebaseAuth.getInstance();
     }
 
@@ -106,8 +112,14 @@ public class ProfileFragment extends Fragment {
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         textViewName.setText(currentUser.getName());
         textViewUniversity.setText(currentUser.getUniversity());
-        textViewNumFriends.setText("   0 Friends");
-        textViewNumBooks.setText("   0 Books");
+        int numBooks = books.size();
+        if(numBooks <= 1) {
+            textViewNumBooks.setText(PADDING + books.size() + " Book");
+        } else {
+            textViewNumBooks.setText(PADDING + books.size() + " Books");
+        }
+        textViewNumFriends.setText(PADDING + "0" + " Friends");
+
     }
 
     private void deleteCurrentUser(){

@@ -1,6 +1,11 @@
 package com.hangbui.booktrade;
 
-public class Book {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class Book implements Parcelable {
     private String id;
     private String ownerId;
     private String name;
@@ -18,6 +23,27 @@ public class Book {
         this.genre = genre;
         this.description = description;
     }
+
+    protected Book(Parcel in) {
+        id = in.readString();
+        ownerId = in.readString();
+        name = in.readString();
+        authors = in.readString();
+        genre = in.readString();
+        description = in.readString();
+    }
+
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
+        @Override
+        public Book createFromParcel(Parcel in) {
+            return new Book(in);
+        }
+
+        @Override
+        public Book[] newArray(int size) {
+            return new Book[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -67,4 +93,18 @@ public class Book {
         this.description = description;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(ownerId);
+        parcel.writeString(name);
+        parcel.writeString(authors);
+        parcel.writeString(genre);
+        parcel.writeString(description);
+    }
 }
