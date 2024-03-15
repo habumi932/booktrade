@@ -45,6 +45,8 @@ public class HomeActivity extends AppCompatActivity {
                 replaceFragment(new ProfileFragment());
             } else if(itemId == R.id.books) {
                 replaceFragment(new BooksFragment());
+            } else if(itemId == R.id.search) {
+                replaceFragment(new SearchFragment());
             }
             return true;
         });
