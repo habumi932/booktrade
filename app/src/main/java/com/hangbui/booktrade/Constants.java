@@ -16,6 +16,10 @@ public class Constants {
     // Books table
     public static final String BOOKS_TABLE = "books";
     public static final String BOOKS_TABLE_COL_OWNER_ID = "ownerId";
+    public static final String BOOKS_TABLE_COL_NAME = "name";
+    public static final String BOOKS_TABLE_COL_AUTHORS = "authors";
+    public static final String BOOKS_TABLE_COL_GENRE = "genre";
+    public static final String BOOKS_TABLE_COL_DESCRIPTION = "description";
 
     // MISC
     public static final String PADDING = "   ";

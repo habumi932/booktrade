@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,17 @@ public class BooksFragment extends Fragment {
     private User currentUser;
     private List<Book> books;
 
+    private static final String ARG_NEW_BOOK = "newBook";
     public BooksFragment() {
         // Required empty public constructor
+    }
+
+    public static BooksFragment newInstance(Book book) {
+        BooksFragment fragment = new BooksFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_NEW_BOOK, book);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     // lISTENERS
@@ -58,6 +68,10 @@ public class BooksFragment extends Fragment {
         super.onCreate(savedInstanceState);
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
         books = getActivity().getIntent().getParcelableArrayListExtra(EXTRA_BOOKS);
+        if(getArguments() != null) {
+            Book newBook = getArguments().getParcelable(ARG_NEW_BOOK);
+            books.add(newBook);
+        }
     }
 
     @Override
