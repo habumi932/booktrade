@@ -26,9 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.hangbui.booktrade.databinding.ActivityRegisterBinding;
 import com.opencsv.CSVReader;
@@ -63,13 +60,13 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, go to home page
+                                // Registration success, save user data & go to home page
                                 Toast.makeText(RegisterActivity.this, "New user created successfully.",
                                         Toast.LENGTH_LONG).show();
                                 Log.d("Success", "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                createUser(user.getUid(), email.getText().toString(), name.getText().toString(), "", university);
-                                getCurrentUser(user.getUid());
+                                String uid = mAuth.getCurrentUser().getUid();
+                                User currentUser = createUser(uid, email.getText().toString(), name.getText().toString(), "", university);
+                                sendUserToHomeActivity(currentUser);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w("Failure", "createUserWithEmail:failure", task.getException());
@@ -128,7 +125,7 @@ public class RegisterActivity extends AppCompatActivity {
         uniSpinner.setAdapter(adapter);
     }
 
-    private void createUser(String id, String email, String name, String photoUrl, String universityName) {
+    private User createUser(String id, String email, String name, String photoUrl, String universityName) {
         Map<String, Object> user = new HashMap<>();
         user.put(USERS_TABLE_COL_ID, id);
         user.put(USERS_TABLE_COL_EMAIL, email);
@@ -150,27 +147,13 @@ public class RegisterActivity extends AppCompatActivity {
                         Log.w("User", "Error writing new user document", e);
                     }
                 });
+
+        return new User(id, email, name, photoUrl, universityName);
     }
-    protected void getCurrentUser(String uid) {
-        try {
-            DocumentReference docRef = db.collection(USERS_TABLE).document(uid);
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Map<String, Object> userData  = documentSnapshot.getData();
-                    String name = (String) userData.get(USERS_TABLE_COL_NAME);
-                    String email = (String) userData.get(USERS_TABLE_COL_EMAIL);
-                    String photoUrl = (String) userData.get(USERS_TABLE_COL_PHOTO_URL);
-                    String university = (String) userData.get(USERS_TABLE_COL_UNIVERSITY);
-                    User currentUser = new User(uid, email, name, photoUrl, university);
-                    Intent theIntent = new Intent(RegisterActivity.this, HomeActivity.class);
-                    theIntent.putExtra(EXTRA_CURRENT_USER, currentUser);
-                    startActivity(theIntent);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e("DB", "Error retrieving user from user id: " + uid);
-        }
+
+    private void sendUserToHomeActivity(User user) {
+        Intent theIntent = new Intent(RegisterActivity.this, HomeActivity.class);
+        theIntent.putExtra(EXTRA_CURRENT_USER, user);
+        startActivity(theIntent);
     }
 }

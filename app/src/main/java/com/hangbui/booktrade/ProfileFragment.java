@@ -10,7 +10,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.hangbui.booktrade.databinding.FragmentProfileBinding;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +29,6 @@ import com.hangbui.booktrade.databinding.FragmentProfileBinding;
  */
 public class ProfileFragment extends Fragment {
 
-    private FragmentProfileBinding binding;
     private FirebaseAuth mAuth;
     private static final String ARG_CURRENT_USER = "currentUser";
     private User currentUser;
@@ -74,24 +71,7 @@ public class ProfileFragment extends Fragment {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            try {
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                user.delete()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(getActivity(), "Account deleted successfully.",
-                                                            Toast.LENGTH_LONG).show();
-                                                    Intent theIntent = new Intent(getActivity(), LogoutActivity.class);
-                                                    startActivity(theIntent);
-                                                }
-                                            }
-                                        });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(getActivity(), "An error has occurred.", Toast.LENGTH_LONG).show();
-                            }
+                            deleteCurrentUser();
                         }
                     })
                     .setNegativeButton("No", null)
@@ -104,12 +84,6 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
         mAuth = FirebaseAuth.getInstance();
-        if(currentUser == null) {
-            Log.e("ProfileFragment", "Current user is null");
-        }
-        else {
-            Log.d("ProfileFragment", currentUser.getName());
-        }
     }
 
     @Override
@@ -134,5 +108,26 @@ public class ProfileFragment extends Fragment {
         textViewUniversity.setText(currentUser.getUniversity());
         textViewNumFriends.setText("   0 Friends");
         textViewNumBooks.setText("   0 Books");
+    }
+
+    private void deleteCurrentUser(){
+        try {
+            FirebaseUser user = mAuth.getCurrentUser();
+            user.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity(), "Account deleted successfully.",
+                                        Toast.LENGTH_LONG).show();
+                                Intent theIntent = new Intent(getActivity(), LogoutActivity.class);
+                                startActivity(theIntent);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "An error has occurred.", Toast.LENGTH_LONG).show();
+        }
     }
 }
