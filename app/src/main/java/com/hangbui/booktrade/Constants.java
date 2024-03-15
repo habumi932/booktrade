@@ -14,5 +14,6 @@ public class Constants {
 
     // Books table
     public static final String BOOKS_TABLE = "books";
+    public static final String BOOKS_TABLE_COL_OWNER_ID = "ownerId";
 }
 
