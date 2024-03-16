@@ -97,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void loadUniversities() {
         // Read CSV file to get a list of all US universities
         List<String> allUniversities = new ArrayList<String>();
-
+        allUniversities.add(0, "Select University");
         try {
             InputStream inputStream = getAssets().open("us_universities.csv");
             Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
