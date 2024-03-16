@@ -11,6 +11,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +69,6 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
-
     private View.OnClickListener button_delete_account_clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -82,6 +83,12 @@ public class ProfileFragment extends Fragment {
                     })
                     .setNegativeButton("No", null)
                     .show();
+        }
+    };
+    private View.OnClickListener button_edit_profile_clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            replaceFragment(new EditProfileFragment());
         }
     };
 
@@ -105,8 +112,10 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated (View view, Bundle savedInstanceState) {
         Button logoutButton = view.findViewById(R.id.button_logout);
         Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
+        Button editProfileButton = view.findViewById(R.id.button_edit_profile);
         logoutButton.setOnClickListener(button_logout_clickListener);
         deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
+        editProfileButton.setOnClickListener(button_edit_profile_clickListener);
 
         TextView textViewName = view.findViewById(R.id.textView_name);
         TextView textViewUniversity = view.findViewById(R.id.textView_university);
@@ -150,5 +159,12 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), "An error has occurred.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }
