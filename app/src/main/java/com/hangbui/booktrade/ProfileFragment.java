@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -106,10 +107,18 @@ public class ProfileFragment extends Fragment {
         Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
         logoutButton.setOnClickListener(button_logout_clickListener);
         deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
+
         TextView textViewName = view.findViewById(R.id.textView_name);
         TextView textViewUniversity = view.findViewById(R.id.textView_university);
         TextView textViewNumFriends = view.findViewById(R.id.textView_num_friends);
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
+        ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
+
+        if(currentUser.getPhotoUrl().equals("")) {
+            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
+        } else {
+            // TODO: Implement displaying user profile pic
+        }
         textViewName.setText(currentUser.getName());
         textViewUniversity.setText(currentUser.getUniversity());
         int numBooks = books.size();
