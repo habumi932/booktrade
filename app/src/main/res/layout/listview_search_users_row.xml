@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/imageView_user_photo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_weight="0"
         android:paddingEnd="20dp"
         android:src="@drawable/default_profile_pic" />
@@ -27,7 +27,7 @@
             android:fontFamily="@font/comfortaa"
             android:text="TextView"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
@@ -35,7 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/comfortaa"
-            android:text="TextView" />
+            android:text="TextView"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -47,7 +48,8 @@
         android:backgroundTint="@color/white"
         android:text="@string/button_add_friend"
         android:textColor="@color/black"
+        android:textSize="10sp"
         app:strokeColor="@color/black"
-        app:strokeWidth="2dp" />
+        app:strokeWidth="1dp" />
 
 </LinearLayout>

@@ -7,6 +7,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.opencsv.CSVReader;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,6 +33,7 @@ public class SearchFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private List<User> users;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -46,6 +61,14 @@ public class SearchFragment extends Fragment {
         return fragment;
     }
 
+    // LISTENERS
+    private View.OnClickListener button_search_users_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            updateSearchUsersResults();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,5 +83,53 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        Button buttonSearchUsers = view.findViewById(R.id.button_search_users);
+        buttonSearchUsers.setOnClickListener(button_search_users_onClickListener);
+        loadUniversities();
+    }
+
+    private void loadUniversities() {
+        // Read CSV file to get a list of all US universities
+        List<String> allUniversities = new ArrayList<String>();
+
+        try {
+            InputStream inputStream = getActivity().getAssets().open("us_universities.csv");
+            Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
+            CSVReader reader = new CSVReader(bReader);
+            String[] nextLine;
+            int id = 0;
+            while ((nextLine = reader.readNext()) != null) {
+                String university = nextLine[0];
+                allUniversities.add(university);
+            }
+            // Remove first element which is the column name
+            allUniversities.remove(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "The specified file was not found", Toast.LENGTH_SHORT).show();
+        }
+
+        // Populate spinner with the university names
+        String[] universities = new String[allUniversities.size()];
+        universities = allUniversities.toArray(universities);
+        Spinner uniSpinner = getView().findViewById(R.id.spinner_universities);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, universities);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uniSpinner.setAdapter(adapter);
+    }
+
+    private void updateSearchUsersResults() {
+        // TODO: Retrieve user search results from DB
+        users = new ArrayList<>();
+        users.add(new User("", "", "Test Spinner", "", "Test University"));
+        CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
+        ListView listviewUsers = getView().findViewById(R.id.listview_users);
+        // listviewBooks.setOnItemClickListener(listview_books_itemClickListener);
+        listviewUsers.setAdapter(adapter);
     }
 }

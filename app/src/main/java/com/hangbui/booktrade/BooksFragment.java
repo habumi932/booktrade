@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,7 +88,7 @@ public class BooksFragment extends Fragment {
     }
 
     private void updateListviewBooks(View view) {
-        CustomAdapter adapter = new CustomAdapter(getActivity(), books);
+        CustomAdapterBooks adapter = new CustomAdapterBooks(getActivity(), books);
         ListView listviewBooks = view.findViewById(R.id.listview_books);
         listviewBooks.setOnItemClickListener(listview_books_itemClickListener);
         listviewBooks.setAdapter(adapter);

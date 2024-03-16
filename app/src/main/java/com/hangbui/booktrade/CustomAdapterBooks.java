@@ -9,12 +9,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class CustomAdapter extends BaseAdapter {
+public class CustomAdapterBooks extends BaseAdapter {
 
     private Context context;
     private List<Book> books;
 
-    public CustomAdapter(Context context, List<Book> books){
+    public CustomAdapterBooks(Context context, List<Book> books){
         this.context = context;
         this.books = books;
     }
