@@ -53,9 +53,10 @@ public class SearchFragment extends Fragment {
             View thisView = getView();
             TextView textviewEmail = thisView.findViewById(R.id.edittext_search_user_email);
             Spinner spinnerUniversity = thisView.findViewById(R.id.spinner_universities);
-            String name = textviewEmail.getText().toString();
+            String email = textviewEmail.getText().toString();
             String university = spinnerUniversity.getSelectedItem().toString();
-            getSearchUsersResult(name, university);
+            Log.d("SearchFragment", "User name & uni: " + email + "  " + university);
+            getSearchUsersResult(email, university);
         }
     };
 
@@ -96,6 +97,7 @@ public class SearchFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), "The specified file was not found", Toast.LENGTH_SHORT).show();
         }
+        allUniversities.add(0, "All");
         allUniversities.add(0, "Select University");
 
         // Populate spinner with the university names
@@ -119,11 +121,15 @@ public class SearchFragment extends Fragment {
             String university
     ) {
         Query query = FirebaseFirestore.getInstance().collection(USERS_TABLE);
+//                .whereEqualTo(USERS_TABLE_COL_EMAIL, email)
+//                .whereEqualTo(USERS_TABLE_COL_UNIVERSITY, university);
         if (!email.equals("")) {
-            query.whereEqualTo(USERS_TABLE_COL_EMAIL, email);
+            query = query.whereEqualTo(USERS_TABLE_COL_EMAIL, email);
         }
-        if (!university.equals("") || university.equals("Select University")) {
-            query.whereEqualTo(USERS_TABLE_COL_UNIVERSITY, university);
+        if (!university.equals("")
+                && !university.equals("Select University")
+                && !university.equals("All")) {
+            query = query.whereEqualTo(USERS_TABLE_COL_UNIVERSITY, university);
         }
         query.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
