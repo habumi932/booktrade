@@ -121,8 +121,6 @@ public class SearchFragment extends Fragment {
             String university
     ) {
         Query query = FirebaseFirestore.getInstance().collection(USERS_TABLE);
-//                .whereEqualTo(USERS_TABLE_COL_EMAIL, email)
-//                .whereEqualTo(USERS_TABLE_COL_UNIVERSITY, university);
         if (!email.equals("")) {
             query = query.whereEqualTo(USERS_TABLE_COL_EMAIL, email);
         }
