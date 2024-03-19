@@ -9,6 +9,8 @@
     <string name="button_add_book">ADD BOOK</string>
     <string name="button_search_users">SEARCH USERS</string>
     <string name="button_add_friend">ADD FRIEND</string>
+    <string name="button_edit_profile_photo">CHOOSE PHOTO</string>
+    <string name="button_save_changes">SAVE CHANGES</string>
     <string name="author_name">by Hang Bui\nhangbui_2024@depauw.edu</string>
     <string name="author_email">hangbui_2024@depauw.edu</string>
     <string name="hint_email">Email</string>
