@@ -123,11 +123,11 @@ public class ProfileFragment extends Fragment {
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
 
-        if(currentUser.getPhotoUrl().equals("")) {
-            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
-        } else {
-            // TODO: Implement displaying user profile pic
-        }
+//        if(currentUser.getPhotoUrl().equals("")) {
+//            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
+//        } else {
+//            // TODO: Implement displaying user profile pic
+//        }
         textViewName.setText(currentUser.getName());
         textViewUniversity.setText(currentUser.getUniversity());
         int numBooks = books.size();

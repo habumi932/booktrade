@@ -97,6 +97,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="30dp"
+            android:layout_marginBottom="50dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout_buttons"
             app:layout_constraintEnd_toEndOf="parent"
@@ -104,9 +105,36 @@
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout_profile">
 
             <Button
+                android:id="@+id/button_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_friends"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/white"
+                app:strokeColor="@color/black"
+                app:strokeWidth="2dp" />
+
+            <Button
+                android:id="@+id/button_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_history"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:backgroundTint="@color/white"
+                app:strokeColor="@color/black"
+                app:strokeWidth="2dp" />
+
+            <Button
                 android:id="@+id/button_edit_profile"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/button_edit_profile"
                 android:textColor="@color/black"
                 android:textSize="16sp"
