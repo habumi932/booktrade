@@ -66,7 +66,6 @@ public class SearchFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             User thisUser = searchUsersResults.get(position);
-            Log.i("On item click: ", thisUser.getName());
             replaceFragment(ViewUserFragment.newInstance(thisUser));
         }
     };
@@ -123,13 +122,14 @@ public class SearchFragment extends Fragment {
     }
 
     private void updateSearchUsersResults(List<User> users) {
+        ListView listviewUsers = getView().findViewById(R.id.listview_users);
         if(users.size() >= 1) {
             CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
-            ListView listviewUsers = getView().findViewById(R.id.listview_users);
             listviewUsers.setOnItemClickListener(listview_users_itemClickListener);
             listviewUsers.setAdapter(adapter);
             searchUsersResults = users;
         } else {
+            listviewUsers.setAdapter(null);
             Toast.makeText(getActivity(), "No result found.", Toast.LENGTH_SHORT).show();
         }
     }
