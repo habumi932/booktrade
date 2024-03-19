@@ -8,11 +8,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -42,6 +45,7 @@ import java.util.List;
  */
 public class SearchFragment extends Fragment {
 
+    private List<User> searchUsersResults;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -55,14 +59,22 @@ public class SearchFragment extends Fragment {
             Spinner spinnerUniversity = thisView.findViewById(R.id.spinner_universities);
             String email = textviewEmail.getText().toString();
             String university = spinnerUniversity.getSelectedItem().toString();
-            Log.d("SearchFragment", "User name & uni: " + email + "  " + university);
             getSearchUsersResult(email, university);
+        }
+    };
+    private AdapterView.OnItemClickListener listview_users_itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            User thisUser = searchUsersResults.get(position);
+            Log.i("On item click: ", thisUser.getName());
+            replaceFragment(ViewUserFragment.newInstance(thisUser));
         }
     };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        searchUsersResults = new ArrayList<>();
     }
 
     @Override
@@ -111,9 +123,15 @@ public class SearchFragment extends Fragment {
     }
 
     private void updateSearchUsersResults(List<User> users) {
-        CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
-        ListView listviewUsers = getView().findViewById(R.id.listview_users);
-        listviewUsers.setAdapter(adapter);
+        if(users.size() >= 1) {
+            CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
+            ListView listviewUsers = getView().findViewById(R.id.listview_users);
+            listviewUsers.setOnItemClickListener(listview_users_itemClickListener);
+            listviewUsers.setAdapter(adapter);
+            searchUsersResults = users;
+        } else {
+            Toast.makeText(getActivity(), "No result found.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getSearchUsersResult(
@@ -136,7 +154,6 @@ public class SearchFragment extends Fragment {
                         if (task.isSuccessful()) {
                             List<User> results = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("Search Users", document.getId() + " => " + document.getData());
                                 User user = document.toObject(User.class);
                                 results.add(user);
                             }
@@ -146,5 +163,12 @@ public class SearchFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }
