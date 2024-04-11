@@ -24,7 +24,7 @@ public class Constants {
     // Friendship table
     public static final String FRIENDSHIPS_TABLE = "friendships";
     public static final String FRIENDSHIPS_TABLE_COL_SENDER_ID = "senderId";
-    public static final String FRIENDSHIPS_TABLE_COL_OWNER_ID = "ownerId";
+    public static final String FRIENDSHIPS_TABLE_COL_RECEIVER_ID = "ownerId";
     public static final String FRIENDSHIPS_TABLE_COL_STATUS = "status";
 
     // Friendship status

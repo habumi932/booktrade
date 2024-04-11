@@ -2,6 +2,12 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_SENDER_ID;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_PENDING;
 
 import android.os.Bundle;
 
@@ -14,18 +20,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +48,7 @@ public class ViewUserFragment extends Fragment {
     private static final String ARG_USER = "user";
 
     private User theUser;
+    private User currentUser;
     private List<Book> theUsersBooks;
 
     public ViewUserFragment() {
@@ -67,6 +79,7 @@ public class ViewUserFragment extends Fragment {
             theUser = getArguments().getParcelable(ARG_USER);
         }
         theUsersBooks = new ArrayList<>();
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
     }
 
     // lISTENERS
@@ -80,6 +93,14 @@ public class ViewUserFragment extends Fragment {
                     .setMessage(description);
             AlertDialog myDialog = myBuilder.create();
             myDialog.show();
+        }
+    };
+    private View.OnClickListener button_add_friend_clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String senderId = currentUser.getId();
+            String receiverId = theUser.getId();
+            sendFriendRequest(senderId, receiverId);
         }
     };
 
@@ -97,6 +118,7 @@ public class ViewUserFragment extends Fragment {
         TextView textViewNumFriends = view.findViewById(R.id.textView_num_friends);
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
+        Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
 
         if(theUser.getPhotoUrl().equals("")) {
             imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
@@ -106,6 +128,7 @@ public class ViewUserFragment extends Fragment {
         textViewName.setText(theUser.getName());
         textViewUniversity.setText(theUser.getUniversity());
         getTheUsersBooks(theUser.getId());
+        addFriendButton.setOnClickListener(button_add_friend_clickListener);
     }
 
     private void updateListViewUsersBooks(List<Book> books) {
@@ -138,5 +161,31 @@ public class ViewUserFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public boolean sendFriendRequest(String senderId, String receiverId) {
+        Map<String, Object> friendship = new HashMap<>();
+        friendship.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId);
+        friendship.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId);
+        friendship.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_PENDING);
+
+        FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE).document()
+                .set(friendship)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        View view = getView();
+                        Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
+                        addFriendButton.setText(R.string.button_friend_request_pending);
+                        addFriendButton.setEnabled(false);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Book", "Error writing new friendship", e);
+                    }
+                });
+        return false;
     }
 }
