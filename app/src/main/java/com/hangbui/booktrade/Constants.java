@@ -21,6 +21,16 @@ public class Constants {
     public static final String BOOKS_TABLE_COL_GENRE = "genre";
     public static final String BOOKS_TABLE_COL_DESCRIPTION = "description";
 
+    // Friendship table
+    public static final String FRIENDSHIPS_TABLE = "friendships";
+    public static final String FRIENDSHIPS_TABLE_COL_SENDER_ID = "senderId";
+    public static final String FRIENDSHIPS_TABLE_COL_OWNER_ID = "ownerId";
+    public static final String FRIENDSHIPS_TABLE_COL_STATUS = "status";
+
+    // Friendship status
+    public static final String FRIENDSHIP_STATUS_PENDING = "PENDING";
+    public static final String FRIENDSHIP_STATUS_ACCEPTED = "ACCEPTED";
+
     // MISC
     public static final String PADDING = "   ";
 }
