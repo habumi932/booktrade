@@ -2,12 +2,15 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
+import static com.hangbui.booktrade.Constants.EXTRA_BOOKS;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_SENDER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_PENDING;
+import static com.hangbui.booktrade.Constants.USERS_TABLE;
 
 import android.os.Bundle;
 
@@ -29,7 +32,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -98,6 +103,7 @@ public class ViewUserFragment extends Fragment {
     private View.OnClickListener button_add_friend_clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            Log.d("ViewUserFragment", "Button clicked");
             String senderId = currentUser.getId();
             String receiverId = theUser.getId();
             sendFriendRequest(senderId, receiverId);
@@ -128,7 +134,9 @@ public class ViewUserFragment extends Fragment {
         textViewName.setText(theUser.getName());
         textViewUniversity.setText(theUser.getUniversity());
         getTheUsersBooks(theUser.getId());
-        addFriendButton.setOnClickListener(button_add_friend_clickListener);
+        String currUserId = currentUser.getId();
+        String theUserId = theUser.getId();
+        updateFriendButton(currUserId, theUserId);
     }
 
     private void updateListViewUsersBooks(List<Book> books) {
@@ -174,18 +182,54 @@ public class ViewUserFragment extends Fragment {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        View view = getView();
-                        Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
-                        addFriendButton.setText(R.string.button_friend_request_pending);
-                        addFriendButton.setEnabled(false);
+                        updateAddFriendButtonHelper(FRIENDSHIP_STATUS_PENDING);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("Book", "Error writing new friendship", e);
+                        Log.e("Friendship", "Error writing new friendship");
                     }
                 });
         return false;
+    }
+
+    private void updateFriendButton(String senderId, String receiverId) {
+        FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE)
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId)
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        String status = "";
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            status = (String) document.get(FRIENDSHIPS_TABLE_COL_STATUS);
+                        }
+                        updateAddFriendButtonHelper(status);
+                    }
+                });
+    }
+
+    private void updateAddFriendButtonHelper(String status) {
+        View view = getView();
+        Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
+        if (status.equals("")) {
+            addFriendButton.setText(R.string.button_add_friend);
+            addFriendButton.setActivated(true);
+            addFriendButton.setOnClickListener(button_add_friend_clickListener);
+        }
+        else if (status.equals(FRIENDSHIP_STATUS_PENDING)) {
+            addFriendButton.setText(R.string.button_friend_request_pending);
+            addFriendButton.setActivated(false);
+            addFriendButton.setTextColor(getResources().getColor(R.color.yellow));
+            addFriendButton.setOnClickListener(null);
+        }
+        else if (status.equals(FRIENDSHIP_STATUS_ACCEPTED)) {
+            addFriendButton.setText(R.string.button_friend_added);
+            addFriendButton.setActivated(false);
+            addFriendButton.setTextColor(getResources().getColor(R.color.green));
+            addFriendButton.setOnClickListener(null);
+        }
     }
 }
