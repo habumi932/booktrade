@@ -172,9 +172,13 @@ public class ProfileFragment extends Fragment {
     }
 
     private int getNumFriends() {
-        ArrayList<String> friendIds = getActivity()
+        ArrayList<String> friendIds =
+                getActivity()
                 .getIntent()
                 .getStringArrayListExtra(EXTRA_FRIEND_IDS);
+        if(friendIds == null) {
+            return 0;
+        }
         return friendIds.size();
     }
 
