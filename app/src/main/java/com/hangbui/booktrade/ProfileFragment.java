@@ -91,6 +91,12 @@ public class ProfileFragment extends Fragment {
             replaceFragment(new EditProfileFragment());
         }
     };
+    private View.OnClickListener button_friends_clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            replaceFragment(new FriendsFragment());
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,9 +119,11 @@ public class ProfileFragment extends Fragment {
         Button logoutButton = view.findViewById(R.id.button_logout);
         Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
         Button editProfileButton = view.findViewById(R.id.button_edit_profile);
+        Button friendsButton = view.findViewById(R.id.button_friends);
         logoutButton.setOnClickListener(button_logout_clickListener);
         deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
         editProfileButton.setOnClickListener(button_edit_profile_clickListener);
+        friendsButton.setOnClickListener(button_friends_clickListener);
 
         TextView textViewName = view.findViewById(R.id.textView_name);
         TextView textViewUniversity = view.findViewById(R.id.textView_university);
