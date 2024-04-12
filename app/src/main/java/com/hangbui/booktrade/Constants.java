@@ -4,6 +4,7 @@ public class Constants {
     // Extras
     public static final String EXTRA_CURRENT_USER = "com.hangbui.booktrade.EXTRA_CURRENT_USER";
     public static final String EXTRA_BOOKS = "com.hangbui.booktrade.EXTRA_BOOKS";
+    public static final String EXTRA_FRIEND_IDS = "com.hangbui.booktrade.EXTRA_FRIEND_IDS";
 
     // Users table
     public static final String USERS_TABLE = "users";

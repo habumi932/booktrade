@@ -2,6 +2,7 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.EXTRA_BOOKS;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+import static com.hangbui.booktrade.Constants.EXTRA_FRIEND_IDS;
 import static com.hangbui.booktrade.Constants.PADDING;
 
 import android.app.AlertDialog;
@@ -27,6 +28,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -144,7 +146,7 @@ public class ProfileFragment extends Fragment {
         } else {
             textViewNumBooks.setText(PADDING + books.size() + " Books");
         }
-        textViewNumFriends.setText(PADDING + "0" + " Friends");
+        textViewNumFriends.setText(PADDING + getNumFriends() + " Friends");
 
     }
 
@@ -167,6 +169,13 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(getActivity(), "An error has occurred.", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private int getNumFriends() {
+        ArrayList<String> friendIds = getActivity()
+                .getIntent()
+                .getStringArrayListExtra(EXTRA_FRIEND_IDS);
+        return friendIds.size();
     }
 
     private void replaceFragment(Fragment fragment){
