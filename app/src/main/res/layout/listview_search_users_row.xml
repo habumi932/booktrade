@@ -41,16 +41,4 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_add_friend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:backgroundTint="@color/white"
-        android:text="@string/button_add_friend"
-        android:textColor="@color/black"
-        android:textSize="10sp"
-        app:strokeColor="@color/black"
-        app:strokeWidth="1dp" />
-
 </LinearLayout>
