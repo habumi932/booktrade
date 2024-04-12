@@ -29,8 +29,9 @@ public class Constants {
     public static final String FRIENDSHIPS_TABLE_COL_STATUS = "status";
 
     // Friendship status
-    public static final String FRIENDSHIP_STATUS_PENDING = "PENDING";
+    public static final String FRIENDSHIP_STATUS_RECEIVED = "RECEIVED";
     public static final String FRIENDSHIP_STATUS_ACCEPTED = "ACCEPTED";
+    public static final String FRIENDSHIP_STATUS_REQUESTED = "REQUESTED";
 
     // MISC
     public static final String PADDING = "   ";

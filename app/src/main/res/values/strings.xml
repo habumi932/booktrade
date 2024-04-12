@@ -9,7 +9,7 @@
     <string name="button_add_book">ADD BOOK</string>
     <string name="button_search_users">SEARCH USERS</string>
     <string name="button_add_friend">ADD FRIEND</string>
-    <string name="button_friend_request_pending">REQUEST PENDING</string>
+    <string name="button_friend_request_requested">REQUESTED</string>
     <string name="button_friend_added">FRIEND ADDED</string>
     <string name="button_edit_profile_photo">CHOOSE PHOTO</string>
     <string name="button_save_changes">SAVE CHANGES</string>

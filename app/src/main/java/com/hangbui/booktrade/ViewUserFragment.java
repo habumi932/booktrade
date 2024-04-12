@@ -2,15 +2,14 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
-import static com.hangbui.booktrade.Constants.EXTRA_BOOKS;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_SENDER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
-import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_PENDING;
-import static com.hangbui.booktrade.Constants.USERS_TABLE;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_RECEIVED;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_REQUESTED;
 
 import android.os.Bundle;
 
@@ -32,9 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -175,20 +172,34 @@ public class ViewUserFragment extends Fragment {
         Map<String, Object> friendship = new HashMap<>();
         friendship.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId);
         friendship.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId);
-        friendship.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_PENDING);
+        friendship.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_REQUESTED);
 
-        FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE).document()
+        Map<String, Object> friendship2 = new HashMap<>();
+        friendship2.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, senderId);
+        friendship2.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, receiverId);
+        friendship2.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_RECEIVED);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(FRIENDSHIPS_TABLE).document()
                 .set(friendship)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        updateAddFriendButtonHelper(FRIENDSHIP_STATUS_PENDING);
+                        updateAddFriendButtonHelper(FRIENDSHIP_STATUS_REQUESTED);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e("Friendship", "Error writing new friendship");
+                    }
+                });
+        db.collection(FRIENDSHIPS_TABLE).document()
+                .set(friendship2)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+
                     }
                 });
         return false;
@@ -219,8 +230,8 @@ public class ViewUserFragment extends Fragment {
             addFriendButton.setActivated(true);
             addFriendButton.setOnClickListener(button_add_friend_clickListener);
         }
-        else if (status.equals(FRIENDSHIP_STATUS_PENDING)) {
-            addFriendButton.setText(R.string.button_friend_request_pending);
+        else if (status.equals(FRIENDSHIP_STATUS_REQUESTED)) {
+            addFriendButton.setText(R.string.button_friend_request_requested);
             addFriendButton.setActivated(false);
             addFriendButton.setTextColor(getResources().getColor(R.color.yellow));
             addFriendButton.setOnClickListener(null);
