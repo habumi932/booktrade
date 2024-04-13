@@ -2,6 +2,11 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.EXTRA_FRIEND_REQUESTS_IDS;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_SENDER_ID;
+import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
 import static com.hangbui.booktrade.Constants.USERS_TABLE;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_ID;
 
@@ -21,8 +26,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -38,7 +46,9 @@ import java.util.List;
  */
 public class FriendRequestsFragment extends Fragment {
 
+    private User currentUser;
     private List<User> friendRequestUsers;
+    private FirebaseFirestore db;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,23 +85,25 @@ public class FriendRequestsFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
-            User requester = friendRequestUsers.get(position);
-            String requesterName = requester.getName();
-            String requesterUni = requester.getUniversity();
+            User sender = friendRequestUsers.get(position);
+            String senderId = sender.getId();
+            String receiverId = currentUser.getId();
+            String senderName = sender.getName();
+            String senderUniversity = sender.getUniversity();
             myBuilder
                     .setTitle("Friend Request")
-                    .setMessage("You received a friend request from " + requesterName + " - "
-                                + requesterUni + ".")
+                    .setMessage("You received a friend request from " + senderName + " - "
+                            + senderUniversity + ".")
                     .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Accept friend request
+                            acceptFriendRequest(senderId, receiverId);
                         }
                     })
                     .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // Delete friend request
+                            // TODO: Delete friend request
                         }
                     });
             AlertDialog myDialog = myBuilder.create();
@@ -106,7 +118,9 @@ public class FriendRequestsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        db = FirebaseFirestore.getInstance();
         friendRequestUsers = new ArrayList<>();
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
     }
 
     @Override
@@ -123,7 +137,7 @@ public class FriendRequestsFragment extends Fragment {
 
     private void updateFriendRequestsList(List<User> users) {
         ListView listviewFriendRequests = getView().findViewById(R.id.listview_friend_requests);
-        if(users.size() >= 1) {
+        if (users.size() >= 1) {
             CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
             listviewFriendRequests.setOnItemClickListener(listview_friend_requests_itemClickListener);
             listviewFriendRequests.setAdapter(adapter);
@@ -138,7 +152,7 @@ public class FriendRequestsFragment extends Fragment {
         ArrayList<String> friendRequestIds = getActivity()
                 .getIntent()
                 .getStringArrayListExtra(EXTRA_FRIEND_REQUESTS_IDS);
-        CollectionReference usersRef = FirebaseFirestore.getInstance().collection(USERS_TABLE);
+        CollectionReference usersRef = db.collection(USERS_TABLE);
         Query query = usersRef.whereIn(USERS_TABLE_COL_ID, friendRequestIds);
         query.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -155,6 +169,46 @@ public class FriendRequestsFragment extends Fragment {
                         } else {
                             Log.d("Book", "Error getting documents: ", task.getException());
                         }
+                    }
+                });
+    }
+
+    private void acceptFriendRequest(String senderId, String receiverId) {
+        CollectionReference friendshipRef = db.collection(FRIENDSHIPS_TABLE);
+        Query query = friendshipRef
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId)
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId);
+        query.get().addOnCompleteListener(
+                new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            String documentId = "";
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                documentId = (String) document.getId();
+                            }
+                            updateFriendRequestStatusToAccepted(documentId);
+                        } else {
+                            Log.e("Friendship", "Error getting friendship documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void updateFriendRequestStatusToAccepted(String documentId) {
+        DocumentReference friendshipRef = db.collection(FRIENDSHIPS_TABLE).document(documentId);
+        friendshipRef
+                .update(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_ACCEPTED)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // TODO: Add friend to friends list
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Friendship update FAILED", "Failed to set friendship to ACCEPTED - " + documentId);
                     }
                 });
     }
