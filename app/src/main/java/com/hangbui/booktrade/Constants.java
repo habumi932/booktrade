@@ -5,6 +5,7 @@ public class Constants {
     public static final String EXTRA_CURRENT_USER = "com.hangbui.booktrade.EXTRA_CURRENT_USER";
     public static final String EXTRA_BOOKS = "com.hangbui.booktrade.EXTRA_BOOKS";
     public static final String EXTRA_FRIEND_IDS = "com.hangbui.booktrade.EXTRA_FRIEND_IDS";
+    public static final String EXTRA_FRIEND_REQUESTS_IDS = "com.hangbui.booktrade.EXTRA_FRIEND_REQUESTS_IDS";
 
     // Users table
     public static final String USERS_TABLE = "users";
@@ -25,7 +26,7 @@ public class Constants {
     // Friendship table
     public static final String FRIENDSHIPS_TABLE = "friendships";
     public static final String FRIENDSHIPS_TABLE_COL_SENDER_ID = "senderId";
-    public static final String FRIENDSHIPS_TABLE_COL_RECEIVER_ID = "ownerId";
+    public static final String FRIENDSHIPS_TABLE_COL_RECEIVER_ID = "receiverId";
     public static final String FRIENDSHIPS_TABLE_COL_STATUS = "status";
 
     // Friendship status

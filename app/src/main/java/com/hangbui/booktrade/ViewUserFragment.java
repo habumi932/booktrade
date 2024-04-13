@@ -173,11 +173,11 @@ public class ViewUserFragment extends Fragment {
         friendship.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId);
         friendship.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId);
         friendship.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_REQUESTED);
-
-        Map<String, Object> friendship2 = new HashMap<>();
-        friendship2.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, senderId);
-        friendship2.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, receiverId);
-        friendship2.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_RECEIVED);
+//
+//        Map<String, Object> friendship2 = new HashMap<>();
+//        friendship2.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, senderId);
+//        friendship2.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, receiverId);
+//        friendship2.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_RECEIVED);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(FRIENDSHIPS_TABLE).document()
@@ -194,14 +194,14 @@ public class ViewUserFragment extends Fragment {
                         Log.e("Friendship", "Error writing new friendship");
                     }
                 });
-        db.collection(FRIENDSHIPS_TABLE).document()
-                .set(friendship2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-
-                    }
-                });
+//        db.collection(FRIENDSHIPS_TABLE).document()
+//                .set(friendship2)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void unused) {
+//
+//                    }
+//                });
         return false;
     }
 

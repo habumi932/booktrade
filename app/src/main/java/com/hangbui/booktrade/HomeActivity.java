@@ -5,11 +5,13 @@ import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
 import static com.hangbui.booktrade.Constants.EXTRA_BOOKS;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.EXTRA_FRIEND_IDS;
+import static com.hangbui.booktrade.Constants.EXTRA_FRIEND_REQUESTS_IDS;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_SENDER_ID;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
+import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_REQUESTED;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hangbui.booktrade.databinding.ActivityHomeBinding;
@@ -47,6 +48,7 @@ public class HomeActivity extends AppCompatActivity {
         String uid = currentUser.getId();
         getBooks(uid);
         getFriends(uid);
+        getFriendRequests(uid);
 
         binding.bottomNavigationBar.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -80,7 +82,6 @@ public class HomeActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             ArrayList<Book> books = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("Book", document.getId() + " => " + document.getData());
                                 Book book = document.toObject(Book.class);
                                 books.add(book);
                             }
@@ -119,6 +120,31 @@ public class HomeActivity extends AppCompatActivity {
                                 getIntent().putStringArrayListExtra(EXTRA_FRIEND_IDS, friendIds);
                             }
 
+                        } else {
+                            Log.d("Friends", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    private void getFriendRequests(String uid) {
+        FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE)
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, uid)
+                .whereEqualTo(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_REQUESTED)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            ArrayList<String> friendRequestsIds = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> data = document.getData();
+                                String senderId = (String) data.get(FRIENDSHIPS_TABLE_COL_SENDER_ID);
+                                if(!senderId.equals(uid)) {
+                                    friendRequestsIds.add(senderId);
+                                }
+                            }
+                            getIntent().putStringArrayListExtra(EXTRA_FRIEND_REQUESTS_IDS, friendRequestsIds);
                         } else {
                             Log.d("Friends", "Error getting documents: ", task.getException());
                         }
