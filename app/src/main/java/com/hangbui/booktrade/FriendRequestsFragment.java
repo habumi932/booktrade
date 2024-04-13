@@ -56,6 +56,8 @@ public class FriendRequestsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String ACTION_ACCEPT_FRIEND_REQUEST = "accept";
+    private static final String ACTION_DECLINE_FRIEND_REQUEST = "decline";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -100,13 +102,13 @@ public class FriendRequestsFragment extends Fragment {
                     .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            acceptFriendRequest(senderId, receiverId);
+                            udpateFriendRequest(senderId, receiverId, ACTION_ACCEPT_FRIEND_REQUEST);
                         }
                     })
                     .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            // TODO: Delete friend request
+                            udpateFriendRequest(senderId, receiverId, ACTION_DECLINE_FRIEND_REQUEST);
                         }
                     });
             AlertDialog myDialog = myBuilder.create();
@@ -155,7 +157,7 @@ public class FriendRequestsFragment extends Fragment {
     }
 
     private void getFriendRequestsList() {
-        if(friendRequestIds.isEmpty()) {
+        if (friendRequestIds.isEmpty()) {
             Toast.makeText(getActivity(), "No friend request found.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -179,7 +181,7 @@ public class FriendRequestsFragment extends Fragment {
                 });
     }
 
-    private void acceptFriendRequest(String senderId, String receiverId) {
+    private void udpateFriendRequest(String senderId, String receiverId, String action) {
         CollectionReference friendshipRef = db.collection(FRIENDSHIPS_TABLE);
         Query query = friendshipRef
                 .whereEqualTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId)
@@ -193,10 +195,34 @@ public class FriendRequestsFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 documentId = (String) document.getId();
                             }
-                            updateFriendRequestStatusToAccepted(documentId, senderId);
+                            if(action.equals(ACTION_ACCEPT_FRIEND_REQUEST)) {
+                                updateFriendRequestStatusToAccepted(documentId, senderId);
+                            } else if (action.equals(ACTION_DECLINE_FRIEND_REQUEST)) {
+                                deleteFriendRequest(documentId, senderId);
+                            }
                         } else {
                             Log.e("Friendship", "Error getting friendship documents: ", task.getException());
                         }
+                    }
+                });
+    }
+
+    private void deleteFriendRequest(String documentId, String senderId) {
+        DocumentReference friendshipRef = db.collection(FRIENDSHIPS_TABLE).document(documentId);
+        friendshipRef
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        friendRequestIds.remove(senderId);
+                        Toast.makeText(getActivity(), "Friend request declined", Toast.LENGTH_SHORT).show();
+                        getFriendRequestsList();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Friend request", "Error deleting document", e);
                     }
                 });
     }
@@ -221,7 +247,7 @@ public class FriendRequestsFragment extends Fragment {
                 });
     }
 
-    private void replaceFragment(Fragment fragment){
+    private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frameLayout, fragment);

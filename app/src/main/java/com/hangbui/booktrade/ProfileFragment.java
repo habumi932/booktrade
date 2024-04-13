@@ -142,11 +142,16 @@ public class ProfileFragment extends Fragment {
         textViewUniversity.setText(currentUser.getUniversity());
         int numBooks = books.size();
         if(numBooks <= 1) {
-            textViewNumBooks.setText(PADDING + books.size() + " Book");
+            textViewNumBooks.setText(PADDING + numBooks + " Book");
         } else {
-            textViewNumBooks.setText(PADDING + books.size() + " Books");
+            textViewNumBooks.setText(PADDING + numBooks + " Books");
         }
-        textViewNumFriends.setText(PADDING + getNumFriends() + " Friends");
+        int numFriends = getNumFriends();
+        if(numFriends <= 1) {
+            textViewNumFriends.setText(PADDING + numFriends + " Friend");
+        } else {
+            textViewNumFriends.setText(PADDING + numFriends + " Friends");
+        }
 
     }
 
