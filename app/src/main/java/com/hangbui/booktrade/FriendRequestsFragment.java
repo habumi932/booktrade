@@ -16,6 +16,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +50,7 @@ public class FriendRequestsFragment extends Fragment {
 
     private User currentUser;
     private List<User> friendRequestUsers;
+    private List<String> friendRequestIds;
     private FirebaseFirestore db;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -121,6 +124,9 @@ public class FriendRequestsFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         friendRequestUsers = new ArrayList<>();
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
+        friendRequestIds = getActivity()
+                .getIntent()
+                .getStringArrayListExtra(EXTRA_FRIEND_REQUESTS_IDS);
     }
 
     @Override
@@ -149,9 +155,10 @@ public class FriendRequestsFragment extends Fragment {
     }
 
     private void getFriendRequestsList() {
-        ArrayList<String> friendRequestIds = getActivity()
-                .getIntent()
-                .getStringArrayListExtra(EXTRA_FRIEND_REQUESTS_IDS);
+        if(friendRequestIds.isEmpty()) {
+            Toast.makeText(getActivity(), "No friend request found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         CollectionReference usersRef = db.collection(USERS_TABLE);
         Query query = usersRef.whereIn(USERS_TABLE_COL_ID, friendRequestIds);
         query.get()
@@ -186,7 +193,7 @@ public class FriendRequestsFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 documentId = (String) document.getId();
                             }
-                            updateFriendRequestStatusToAccepted(documentId);
+                            updateFriendRequestStatusToAccepted(documentId, senderId);
                         } else {
                             Log.e("Friendship", "Error getting friendship documents: ", task.getException());
                         }
@@ -194,14 +201,16 @@ public class FriendRequestsFragment extends Fragment {
                 });
     }
 
-    private void updateFriendRequestStatusToAccepted(String documentId) {
+    private void updateFriendRequestStatusToAccepted(String documentId, String newFriendId) {
         DocumentReference friendshipRef = db.collection(FRIENDSHIPS_TABLE).document(documentId);
         friendshipRef
                 .update(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_ACCEPTED)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // TODO: Add friend to friends list
+                        Toast.makeText(getActivity(), "Friend successfully added", Toast.LENGTH_SHORT).show();
+                        friendRequestIds.remove(newFriendId);
+                        replaceFragment(FriendsFragment.newInstance(newFriendId));
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -210,5 +219,12 @@ public class FriendRequestsFragment extends Fragment {
                         Log.e("Friendship update FAILED", "Failed to set friendship to ACCEPTED - " + documentId);
                     }
                 });
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }

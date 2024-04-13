@@ -38,14 +38,9 @@ public class FriendsFragment extends Fragment {
     private FirebaseFirestore db;
     private List<String> friendIds;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    private static final String ARG_NEW_FRIEND_ID = "newFriendId";
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String friendId;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -60,11 +55,10 @@ public class FriendsFragment extends Fragment {
      * @return A new instance of fragment FriendsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FriendsFragment newInstance(String param1, String param2) {
+    public static FriendsFragment newInstance(String friendId) {
         FriendsFragment fragment = new FriendsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_NEW_FRIEND_ID, friendId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,12 +74,12 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         db = FirebaseFirestore.getInstance();
         friendIds = getActivity().getIntent().getStringArrayListExtra(EXTRA_FRIEND_IDS);
+        if (getArguments() != null) {
+            friendId = getArguments().getString(ARG_NEW_FRIEND_ID);
+            friendIds.add(friendId);
+        }
     }
 
     @Override
@@ -104,6 +98,10 @@ public class FriendsFragment extends Fragment {
     }
 
     private void getFriendsList() {
+        if(friendIds.isEmpty()) {
+            updateFriendsList(new ArrayList<User>());
+            return;
+        }
         CollectionReference usersRef = db.collection(USERS_TABLE);
         Query query = usersRef.whereIn(USERS_TABLE_COL_ID, friendIds);
         query.get()

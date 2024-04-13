@@ -117,9 +117,8 @@ public class HomeActivity extends AppCompatActivity {
                                 } else {
                                     friendIds.add(receiverId);
                                 }
-                                getIntent().putStringArrayListExtra(EXTRA_FRIEND_IDS, friendIds);
                             }
-
+                            getIntent().putStringArrayListExtra(EXTRA_FRIEND_IDS, friendIds);
                         } else {
                             Log.d("Friends", "Error getting documents: ", task.getException());
                         }
