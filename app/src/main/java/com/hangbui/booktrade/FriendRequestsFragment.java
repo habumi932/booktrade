@@ -162,7 +162,6 @@ public class FriendRequestsFragment extends Fragment {
                             List<User> results = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
-                                Log.d("Friend request user: ", user.getId());
                                 results.add(user);
                             }
                             updateFriendRequestsList(results);
