@@ -5,15 +5,18 @@ import static com.hangbui.booktrade.Constants.EXTRA_FRIEND_REQUESTS_IDS;
 import static com.hangbui.booktrade.Constants.USERS_TABLE;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_ID;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,6 +37,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FriendRequestsFragment extends Fragment {
+
+    private List<User> friendRequestUsers;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,6 +70,35 @@ public class FriendRequestsFragment extends Fragment {
         return fragment;
     }
 
+    // LISTENERS
+    private AdapterView.OnItemClickListener listview_friend_requests_itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
+            User requester = friendRequestUsers.get(position);
+            String requesterName = requester.getName();
+            String requesterUni = requester.getUniversity();
+            myBuilder
+                    .setTitle("Friend Request")
+                    .setMessage("You received a friend request from " + requesterName + " - "
+                                + requesterUni + ".")
+                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Accept friend request
+                        }
+                    })
+                    .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // Delete friend request
+                        }
+                    });
+            AlertDialog myDialog = myBuilder.create();
+            myDialog.show();
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +106,7 @@ public class FriendRequestsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        friendRequestUsers = new ArrayList<>();
     }
 
     @Override
@@ -90,8 +125,9 @@ public class FriendRequestsFragment extends Fragment {
         ListView listviewFriendRequests = getView().findViewById(R.id.listview_friend_requests);
         if(users.size() >= 1) {
             CustomAdapterSearchUsers adapter = new CustomAdapterSearchUsers(getActivity(), users);
-            // listviewUsers.setOnItemClickListener(listview_users_itemClickListener);
+            listviewFriendRequests.setOnItemClickListener(listview_friend_requests_itemClickListener);
             listviewFriendRequests.setAdapter(adapter);
+            friendRequestUsers = users;
         } else {
             listviewFriendRequests.setAdapter(null);
             Toast.makeText(getActivity(), "No friend request found.", Toast.LENGTH_SHORT).show();
