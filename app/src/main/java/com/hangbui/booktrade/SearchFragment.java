@@ -1,5 +1,6 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.USERS_TABLE;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_EMAIL;
 import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_UNIVERSITY;
@@ -46,6 +47,7 @@ import java.util.List;
 public class SearchFragment extends Fragment {
 
     private List<User> searchUsersResults;
+    private User currentUser;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -74,6 +76,7 @@ public class SearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         searchUsersResults = new ArrayList<>();
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
     }
 
     @Override
@@ -155,7 +158,9 @@ public class SearchFragment extends Fragment {
                             List<User> results = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
-                                results.add(user);
+                                if(!user.getId().equals(currentUser.getId())) {
+                                    results.add(user);
+                                }
                             }
                             updateSearchUsersResults(results);
                         } else {
