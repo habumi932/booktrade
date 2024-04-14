@@ -2,6 +2,12 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_BOOK_ID;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_RECEIVER_ID;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_SENDER_ID;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_STATUS;
+import static com.hangbui.booktrade.Constants.BOOK_REQUEST_STATUS_REQUESTED;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE;
 import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_RECEIVER_ID;
@@ -11,6 +17,7 @@ import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_RECEIVED;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_REQUESTED;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +33,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,6 +59,7 @@ public class ViewUserFragment extends Fragment {
 
     private static final String ARG_USER = "user";
 
+    private FirebaseFirestore db;
     private User theUser;
     private User currentUser;
     private List<Book> theUsersBooks;
@@ -82,6 +91,7 @@ public class ViewUserFragment extends Fragment {
         if (getArguments() != null) {
             theUser = getArguments().getParcelable(ARG_USER);
         }
+        db = FirebaseFirestore.getInstance();
         theUsersBooks = new ArrayList<>();
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
     }
@@ -92,9 +102,20 @@ public class ViewUserFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
             Book thisBook = theUsersBooks.get(position);
+            String senderId = currentUser.getId();
+            String receiverId = thisBook.getOwnerId();
+            String bookId = thisBook.getBookId();
             String description = thisBook.getDescription();
-            myBuilder.setTitle("Book Description")
-                    .setMessage(description);
+            myBuilder
+                    .setTitle("Book Description")
+                    .setMessage(description)
+                    .setPositiveButton("Request book",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    sendTradeRequest(senderId, receiverId, bookId);
+                                }
+                            });
             AlertDialog myDialog = myBuilder.create();
             myDialog.show();
         }
@@ -151,7 +172,7 @@ public class ViewUserFragment extends Fragment {
     }
 
     private void getTheUsersBooks(String uid) {
-        FirebaseFirestore.getInstance().collection(BOOKS_TABLE)
+        db.collection(BOOKS_TABLE)
                 .whereEqualTo(BOOKS_TABLE_COL_OWNER_ID, uid)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -197,7 +218,7 @@ public class ViewUserFragment extends Fragment {
     }
 
     private void updateFriendButton(String senderId, String receiverId) {
-        Query query = FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE)
+        Query query = db.collection(FRIENDSHIPS_TABLE)
                 .where(Filter.or(
                         Filter.and(
                                 Filter.equalTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId),
@@ -217,8 +238,8 @@ public class ViewUserFragment extends Fragment {
                             String theSenderId = (String) document.get(FRIENDSHIPS_TABLE_COL_SENDER_ID);
                             String theReceiverId = (String) document.get(FRIENDSHIPS_TABLE_COL_RECEIVER_ID);
                             status = (String) document.get(FRIENDSHIPS_TABLE_COL_STATUS);
-                            if(status.equals(FRIENDSHIP_STATUS_REQUESTED)
-                                && theSenderId.equals(receiverId)) {
+                            if (status.equals(FRIENDSHIP_STATUS_REQUESTED)
+                                    && theSenderId.equals(receiverId)) {
                                 status = FRIENDSHIP_STATUS_RECEIVED;
                             }
                         }
@@ -250,5 +271,49 @@ public class ViewUserFragment extends Fragment {
             addFriendButton.setTextColor(getResources().getColor(R.color.yellow));
             addFriendButton.setOnClickListener(null);
         }
+    }
+
+    private void sendTradeRequest(String senderId, String receiverId, String bookId) {
+        Query query = db.collection(BOOK_REQUESTS_TABLE)
+                .whereEqualTo(BOOK_REQUESTS_TABLE_COL_SENDER_ID, senderId)
+                .whereEqualTo(BOOK_REQUESTS_TABLE_COL_BOOK_ID, bookId);
+        query
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size() == 0) {
+                                sendTradeRequestHelper(senderId, receiverId, bookId);
+                            }
+                            else {
+                                Toast.makeText(getActivity(), "Trade request already sent.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void sendTradeRequestHelper(String senderId, String receiverId, String bookId) {
+        Map<String, Object> tradeRequest = new HashMap<>();
+        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_BOOK_ID, bookId);
+        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_SENDER_ID, senderId);
+        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_RECEIVER_ID, receiverId);
+        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_STATUS, BOOK_REQUEST_STATUS_REQUESTED);
+
+        db.collection(BOOK_REQUESTS_TABLE).document()
+                .set(tradeRequest)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(getActivity(), "Trade request successfully sent.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Book requests", "Failed to write new trade request");
+                    }
+                });
     }
 }

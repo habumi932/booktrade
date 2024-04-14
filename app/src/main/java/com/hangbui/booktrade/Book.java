@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 public class Book implements Parcelable {
-    private String id;
+    private String bookId;
     private String ownerId;
     private String name;
     private String authors;
@@ -15,8 +15,8 @@ public class Book implements Parcelable {
 
     public Book() {
     }
-    public Book(String id, String ownerId, String name, String authors, String genre, String description) {
-        this.id = id;
+    public Book(String bookId, String ownerId, String name, String authors, String genre, String description) {
+        this.bookId = bookId;
         this.ownerId = ownerId;
         this.name = name;
         this.authors = authors;
@@ -25,7 +25,7 @@ public class Book implements Parcelable {
     }
 
     protected Book(Parcel in) {
-        id = in.readString();
+        bookId = in.readString();
         ownerId = in.readString();
         name = in.readString();
         authors = in.readString();
@@ -45,12 +45,12 @@ public class Book implements Parcelable {
         }
     };
 
-    public String getId() {
-        return id;
+    public String getBookId() {
+        return bookId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
     public String getOwnerId() {
@@ -100,7 +100,7 @@ public class Book implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
-        parcel.writeString(id);
+        parcel.writeString(bookId);
         parcel.writeString(ownerId);
         parcel.writeString(name);
         parcel.writeString(authors);

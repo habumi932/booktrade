@@ -17,11 +17,23 @@ public class Constants {
 
     // Books table
     public static final String BOOKS_TABLE = "books";
+    public static final String BOOKS_TABLE_COL_BOOK_ID = "bookId";
     public static final String BOOKS_TABLE_COL_OWNER_ID = "ownerId";
     public static final String BOOKS_TABLE_COL_NAME = "name";
     public static final String BOOKS_TABLE_COL_AUTHORS = "authors";
     public static final String BOOKS_TABLE_COL_GENRE = "genre";
     public static final String BOOKS_TABLE_COL_DESCRIPTION = "description";
+
+    // Book requests table
+    public static final String BOOK_REQUESTS_TABLE = "book_requests";
+    public static final String BOOK_REQUESTS_TABLE_COL_BOOK_ID = "bookId";
+    public static final String BOOK_REQUESTS_TABLE_COL_SENDER_ID = "senderId";
+    public static final String BOOK_REQUESTS_TABLE_COL_RECEIVER_ID = "receiverId";
+    public static final String BOOK_REQUESTS_TABLE_COL_STATUS = "status";
+
+    // Book request status
+    public static final String BOOK_REQUEST_STATUS_REQUESTED = "REQUESTED";
+
 
     // Friendship table
     public static final String FRIENDSHIPS_TABLE = "friendships";
