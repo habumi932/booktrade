@@ -31,7 +31,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -91,7 +93,7 @@ public class ViewUserFragment extends Fragment {
             AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
             Book thisBook = theUsersBooks.get(position);
             String description = thisBook.getDescription();
-            myBuilder   .setTitle("Book Description")
+            myBuilder.setTitle("Book Description")
                     .setMessage(description);
             AlertDialog myDialog = myBuilder.create();
             myDialog.show();
@@ -123,7 +125,7 @@ public class ViewUserFragment extends Fragment {
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
         Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
 
-        if(theUser.getPhotoUrl().equals("")) {
+        if (theUser.getPhotoUrl().equals("")) {
             imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
         } else {
             // TODO: Implement displaying user profile pic
@@ -139,7 +141,7 @@ public class ViewUserFragment extends Fragment {
     private void updateListViewUsersBooks(List<Book> books) {
         ListView listviewUsersBooks = getView().findViewById(R.id.listview_users_books);
         theUsersBooks = books;
-        if(books.size() >= 1) {
+        if (books.size() >= 1) {
             CustomAdapterBooks adapter = new CustomAdapterBooks(getActivity(), books);
             listviewUsersBooks.setOnItemClickListener(listview_users_books_itemClickListener);
             listviewUsersBooks.setAdapter(adapter);
@@ -147,6 +149,7 @@ public class ViewUserFragment extends Fragment {
             listviewUsersBooks.setAdapter(null);
         }
     }
+
     private void getTheUsersBooks(String uid) {
         FirebaseFirestore.getInstance().collection(BOOKS_TABLE)
                 .whereEqualTo(BOOKS_TABLE_COL_OWNER_ID, uid)
@@ -173,11 +176,6 @@ public class ViewUserFragment extends Fragment {
         friendship.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId);
         friendship.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId);
         friendship.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_REQUESTED);
-//
-//        Map<String, Object> friendship2 = new HashMap<>();
-//        friendship2.put(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, senderId);
-//        friendship2.put(FRIENDSHIPS_TABLE_COL_SENDER_ID, receiverId);
-//        friendship2.put(FRIENDSHIPS_TABLE_COL_STATUS, FRIENDSHIP_STATUS_RECEIVED);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(FRIENDSHIPS_TABLE).document()
@@ -194,28 +192,35 @@ public class ViewUserFragment extends Fragment {
                         Log.e("Friendship", "Error writing new friendship");
                     }
                 });
-//        db.collection(FRIENDSHIPS_TABLE).document()
-//                .set(friendship2)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//
-//                    }
-//                });
+
         return false;
     }
 
     private void updateFriendButton(String senderId, String receiverId) {
-        FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE)
-                .whereEqualTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId)
-                .whereEqualTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId)
-                .get()
+        Query query = FirebaseFirestore.getInstance().collection(FRIENDSHIPS_TABLE)
+                .where(Filter.or(
+                        Filter.and(
+                                Filter.equalTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, senderId),
+                                Filter.equalTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, receiverId)
+                        ),
+                        Filter.and(
+                                Filter.equalTo(FRIENDSHIPS_TABLE_COL_SENDER_ID, receiverId),
+                                Filter.equalTo(FRIENDSHIPS_TABLE_COL_RECEIVER_ID, senderId)
+                        )
+                ));
+        query.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         String status = "";
                         for (QueryDocumentSnapshot document : task.getResult()) {
+                            String theSenderId = (String) document.get(FRIENDSHIPS_TABLE_COL_SENDER_ID);
+                            String theReceiverId = (String) document.get(FRIENDSHIPS_TABLE_COL_RECEIVER_ID);
                             status = (String) document.get(FRIENDSHIPS_TABLE_COL_STATUS);
+                            if(status.equals(FRIENDSHIP_STATUS_REQUESTED)
+                                && theSenderId.equals(receiverId)) {
+                                status = FRIENDSHIP_STATUS_RECEIVED;
+                            }
                         }
                         updateAddFriendButtonHelper(status);
                     }
@@ -229,17 +234,20 @@ public class ViewUserFragment extends Fragment {
             addFriendButton.setText(R.string.button_add_friend);
             addFriendButton.setActivated(true);
             addFriendButton.setOnClickListener(button_add_friend_clickListener);
-        }
-        else if (status.equals(FRIENDSHIP_STATUS_REQUESTED)) {
+        } else if (status.equals(FRIENDSHIP_STATUS_REQUESTED)) {
             addFriendButton.setText(R.string.button_friend_request_requested);
             addFriendButton.setActivated(false);
             addFriendButton.setTextColor(getResources().getColor(R.color.yellow));
             addFriendButton.setOnClickListener(null);
-        }
-        else if (status.equals(FRIENDSHIP_STATUS_ACCEPTED)) {
+        } else if (status.equals(FRIENDSHIP_STATUS_ACCEPTED)) {
             addFriendButton.setText(R.string.button_friend_added);
             addFriendButton.setActivated(false);
             addFriendButton.setTextColor(getResources().getColor(R.color.green));
+            addFriendButton.setOnClickListener(null);
+        } else if (status.equals(FRIENDSHIP_STATUS_RECEIVED)) {
+            addFriendButton.setText(R.string.button_friend_request_received);
+            addFriendButton.setActivated(false);
+            addFriendButton.setTextColor(getResources().getColor(R.color.yellow));
             addFriendButton.setOnClickListener(null);
         }
     }
