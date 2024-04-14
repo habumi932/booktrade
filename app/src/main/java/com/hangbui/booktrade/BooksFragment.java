@@ -61,6 +61,12 @@ public class BooksFragment extends Fragment {
             replaceFragment(new AddBookFragment());
         }
     };
+    private View.OnClickListener button_trade_requests_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            replaceFragment(new TradeRequestsFragment());
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +89,9 @@ public class BooksFragment extends Fragment {
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
         Button buttonAddBook = view.findViewById(R.id.button_add_book);
+        Button tradeRequestsButton = view.findViewById(R.id.button_trade_requests);
         buttonAddBook.setOnClickListener(button_add_book_onClickListener);
+        tradeRequestsButton.setOnClickListener(button_trade_requests_onClickListener);
         updateListviewBooks(view);
     }
 
