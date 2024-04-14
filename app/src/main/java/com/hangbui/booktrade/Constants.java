@@ -28,6 +28,8 @@ public class Constants {
     public static final String BOOK_REQUESTS_TABLE = "book_requests";
     public static final String BOOK_REQUESTS_TABLE_COL_BOOK_ID = "bookId";
     public static final String BOOK_REQUESTS_TABLE_COL_SENDER_ID = "senderId";
+    public static final String BOOK_REQUESTS_TABLE_COL_SENDER_NAME = "senderName";
+    public static final String BOOK_REQUESTS_TABLE_COL_SENDER_UNIVERSITY = "senderUniversity";
     public static final String BOOK_REQUESTS_TABLE_COL_RECEIVER_ID = "receiverId";
     public static final String BOOK_REQUESTS_TABLE_COL_STATUS = "status";
 

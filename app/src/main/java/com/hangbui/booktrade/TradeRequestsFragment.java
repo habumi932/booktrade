@@ -9,13 +9,16 @@ import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +38,8 @@ public class TradeRequestsFragment extends Fragment {
 
     private FirebaseFirestore db;
     private User currentUser;
+    private List<Book> tradeRequestBooks;
+    private List<TradeRequest> tradeRequests;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -89,6 +94,24 @@ public class TradeRequestsFragment extends Fragment {
         getTradeRequests(currentUser.getId());
     }
 
+    // LISTENERS
+    private AdapterView.OnItemClickListener listview_trade_request_itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
+            TradeRequest request = tradeRequests.get(position);
+            String message = request.getSenderName() + " from " + request.getSenderUniversity()
+                    + " requested to borrow this book.";
+            myBuilder
+                    .setTitle("Book trade request")
+                    .setMessage(message)
+                    .setPositiveButton("Accept", null)
+                    .setNegativeButton("Decline", null);
+            AlertDialog myDialog = myBuilder.create();
+            myDialog.show();
+        }
+    };
+
     private void getTradeRequests(String uid) {
         db.collection(BOOK_REQUESTS_TABLE)
                 .whereEqualTo(BOOK_REQUESTS_TABLE_COL_RECEIVER_ID, uid)
@@ -111,6 +134,11 @@ public class TradeRequestsFragment extends Fragment {
     }
 
     private void updateTradeRequestsList(ArrayList<TradeRequest> requests) {
+        if(requests.isEmpty()) {
+            Toast.makeText(getActivity(), "No trade requests found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        tradeRequests = requests;
         ArrayList<String> bookIds = new ArrayList<>();
         for (TradeRequest request : requests) {
             bookIds.add(request.getBookId());
@@ -137,10 +165,11 @@ public class TradeRequestsFragment extends Fragment {
     }
 
     private void updateListviewBooks(List<Book> books) {
+        tradeRequestBooks = books;
         View view = getView();
         CustomAdapterBooks adapter = new CustomAdapterBooks(getActivity(), books);
         ListView listviewTradeRequests = view.findViewById(R.id.listview_trade_requests);
-        // listviewBooks.setOnItemClickListener(listview_trade_);
+        listviewTradeRequests.setOnItemClickListener(listview_trade_request_itemClickListener);
         listviewTradeRequests.setAdapter(adapter);
     }
 }

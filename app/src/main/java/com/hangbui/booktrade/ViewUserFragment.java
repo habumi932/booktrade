@@ -6,6 +6,8 @@ import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_BOOK_ID;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_RECEIVER_ID;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_SENDER_ID;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_SENDER_NAME;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_SENDER_UNIVERSITY;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_STATUS;
 import static com.hangbui.booktrade.Constants.BOOK_REQUEST_STATUS_REQUESTED;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
@@ -16,6 +18,10 @@ import static com.hangbui.booktrade.Constants.FRIENDSHIPS_TABLE_COL_STATUS;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_ACCEPTED;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_RECEIVED;
 import static com.hangbui.booktrade.Constants.FRIENDSHIP_STATUS_REQUESTED;
+import static com.hangbui.booktrade.Constants.USERS_TABLE;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_ID;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_NAME;
+import static com.hangbui.booktrade.Constants.USERS_TABLE_COL_UNIVERSITY;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -295,24 +301,41 @@ public class ViewUserFragment extends Fragment {
     }
 
     private void sendTradeRequestHelper(String senderId, String receiverId, String bookId) {
-        Map<String, Object> tradeRequest = new HashMap<>();
-        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_BOOK_ID, bookId);
-        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_SENDER_ID, senderId);
-        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_RECEIVER_ID, receiverId);
-        tradeRequest.put(BOOK_REQUESTS_TABLE_COL_STATUS, BOOK_REQUEST_STATUS_REQUESTED);
+        db.collection(USERS_TABLE)
+                .whereEqualTo(USERS_TABLE_COL_ID, senderId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String senderName = (String) document.get(USERS_TABLE_COL_NAME);
+                                String senderUni = (String) document.get(USERS_TABLE_COL_UNIVERSITY);
 
-        db.collection(BOOK_REQUESTS_TABLE).document()
-                .set(tradeRequest)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(getActivity(), "Trade request successfully sent.", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Book requests", "Failed to write new trade request");
+                                Map<String, Object> tradeRequest = new HashMap<>();
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_BOOK_ID, bookId);
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_SENDER_ID, senderId);
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_RECEIVER_ID, receiverId);
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_STATUS, BOOK_REQUEST_STATUS_REQUESTED);
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_SENDER_NAME, senderName);
+                                tradeRequest.put(BOOK_REQUESTS_TABLE_COL_SENDER_UNIVERSITY, senderUni);
+
+                                db.collection(BOOK_REQUESTS_TABLE).document()
+                                        .set(tradeRequest)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Toast.makeText(getActivity(), "Trade request successfully sent.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("Book requests", "Failed to write new trade request");
+                                            }
+                                        });
+                            }
+                        }
                     }
                 });
     }
