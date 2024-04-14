@@ -1,12 +1,26 @@
 package com.hangbui.booktrade;
 
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE;
+import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_RECEIVER_ID;
+import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
+
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,6 +29,8 @@ import android.view.ViewGroup;
  */
 public class TradeRequestsFragment extends Fragment {
 
+    private FirebaseFirestore db;
+    private User currentUser;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,6 +69,9 @@ public class TradeRequestsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        db = FirebaseFirestore.getInstance();
+        currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
+        getTradeRequests(currentUser.getId());
     }
 
     @Override
@@ -60,5 +79,28 @@ public class TradeRequestsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_trade_requests, container, false);
+    }
+
+    private void getTradeRequests(String uid) {
+        db.collection(BOOK_REQUESTS_TABLE)
+                .whereEqualTo(BOOK_REQUESTS_TABLE_COL_RECEIVER_ID, uid)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            ArrayList<TradeRequest> requests = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                TradeRequest request = document.toObject(TradeRequest.class);
+                                requests.add(request);
+                            }
+                            updateTradeRequestsList(requests);
+                        }
+                    }
+                });
+    }
+
+    private void updateTradeRequestsList(ArrayList<TradeRequest> requests) {
+
     }
 }
