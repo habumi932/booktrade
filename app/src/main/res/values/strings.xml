@@ -4,7 +4,7 @@
     <string name="button_register">REGISTER</string>
     <string name="button_logout">LOG OUT</string>
     <string name="button_delete_account">DELETE ACCOUNT</string>
-    <string name="button_edit_profile">EDIT PROFILE</string>
+    <string name="button_edit_profile_picture">CHANGE PHOTO</string>
     <string name="button_history">HISTORY</string>
     <string name="button_add_book">ADD BOOK</string>
     <string name="button_trade_requests">TRADE REQUESTS</string>
@@ -12,7 +12,7 @@
     <string name="button_add_friend">ADD FRIEND</string>
     <string name="button_friend_request_requested">REQUESTED</string>
     <string name="button_friend_added">FRIEND ADDED</string>
-    <string name="button_edit_profile_photo">CHOOSE PHOTO</string>
+    <string name="button_choose_profile_picture">CHOOSE PICTURE</string>
     <string name="button_save_changes">SAVE CHANGES</string>
     <string name="button_friends">FRIENDS</string>
     <string name="button_friend_requests">FRIEND REQUESTS</string>

@@ -118,11 +118,11 @@
                 app:strokeWidth="2dp" />
 
             <Button
-                android:id="@+id/button_history"
+                android:id="@+id/button_change_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/button_history"
+                android:text="@string/button_edit_profile_picture"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -131,11 +131,11 @@
                 app:strokeWidth="2dp" />
 
             <Button
-                android:id="@+id/button_edit_profile"
+                android:id="@+id/button_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/button_edit_profile"
+                android:text="@string/button_history"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"

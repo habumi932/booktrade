@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
     private View.OnClickListener button_edit_profile_clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            replaceFragment(new EditProfileFragment());
+            replaceFragment(new EditProfilePictureFragment());
         }
     };
     private View.OnClickListener button_friends_clickListener = new View.OnClickListener() {
@@ -120,11 +120,11 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated (View view, Bundle savedInstanceState) {
         Button logoutButton = view.findViewById(R.id.button_logout);
         Button deleteAccountButton = view.findViewById(R.id.button_delete_account);
-        Button editProfileButton = view.findViewById(R.id.button_edit_profile);
+        Button changePhotoButton = view.findViewById(R.id.button_change_photo);
         Button friendsButton = view.findViewById(R.id.button_friends);
         logoutButton.setOnClickListener(button_logout_clickListener);
         deleteAccountButton.setOnClickListener(button_delete_account_clickListener);
-        editProfileButton.setOnClickListener(button_edit_profile_clickListener);
+        changePhotoButton.setOnClickListener(button_edit_profile_clickListener);
         friendsButton.setOnClickListener(button_friends_clickListener);
 
         TextView textViewName = view.findViewById(R.id.textView_name);
