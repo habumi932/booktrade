@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,12 +133,13 @@ public class ProfileFragment extends Fragment {
         TextView textViewNumFriends = view.findViewById(R.id.textView_num_friends);
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
+        String profilePhotoUrl = currentUser.getPhotoUrl();
 
-//        if(currentUser.getPhotoUrl().equals("")) {
-//            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
-//        } else {
-//            // TODO: Implement displaying user profile pic
-//        }
+        if(profilePhotoUrl.equals("")) {
+            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
+        } else {
+            Picasso.get().load(profilePhotoUrl).into(imageViewPhoto);
+        }
         textViewName.setText(currentUser.getName());
         textViewUniversity.setText(currentUser.getUniversity());
         int numBooks = books.size();
