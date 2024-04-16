@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -152,7 +153,9 @@ public class TradeRequestsFragment extends Fragment {
 
     private void updateTradeRequestsList(ArrayList<TradeRequest> requests) {
         if(requests.isEmpty()) {
-            Toast.makeText(getActivity(), "No trade requests found.", Toast.LENGTH_SHORT).show();
+            View view = getView();
+            TextView textViewMessage = view.findViewById(R.id.textView_no_trade_requests_message);
+            textViewMessage.setText(R.string.message_no_trade_requests);
             return;
         }
         tradeRequests = requests;

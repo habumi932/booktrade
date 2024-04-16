@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -152,13 +153,15 @@ public class FriendRequestsFragment extends Fragment {
             friendRequestUsers = users;
         } else {
             listviewFriendRequests.setAdapter(null);
-            Toast.makeText(getActivity(), "No friend request found.", Toast.LENGTH_SHORT).show();
+            TextView textViewMessage = getView().findViewById(R.id.textView_no_friend_requests_message);
+            textViewMessage.setText(R.string.message_no_friend_requests);
         }
     }
 
     private void getFriendRequestsList() {
         if (friendRequestIds.isEmpty()) {
-            Toast.makeText(getActivity(), "No friend request found.", Toast.LENGTH_SHORT).show();
+            TextView textViewMessage = getView().findViewById(R.id.textView_no_friend_requests_message);
+            textViewMessage.setText(R.string.message_no_friend_requests);
             return;
         }
         CollectionReference usersRef = db.collection(USERS_TABLE);

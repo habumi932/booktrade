@@ -32,6 +32,8 @@
     <string name="nav_bar_profile">Profile</string>
     <string name="nav_bar_books">Books</string>
     <string name="nav_bar_search">Search</string>
+    <string name="message_no_trade_requests">No trade requests found.</string>
+    <string name="message_no_friend_requests">No friend requests found.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
