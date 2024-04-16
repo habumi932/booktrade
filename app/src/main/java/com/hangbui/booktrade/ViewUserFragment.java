@@ -50,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,11 +152,10 @@ public class ViewUserFragment extends Fragment {
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
         Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
+        String photoUrl = theUser.getPhotoUrl();
 
-        if (theUser.getPhotoUrl().equals("")) {
-            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
-        } else {
-            // TODO: Implement displaying user profile pic
+        if (!photoUrl.equals("")) {
+            Picasso.get().load(photoUrl).into(imageViewPhoto);
         }
         textViewName.setText(theUser.getName());
         textViewUniversity.setText(theUser.getUniversity());
