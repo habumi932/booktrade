@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class BooksFragment extends Fragment {
     private List<Book> books;
 
     private static final String ARG_NEW_BOOK = "newBook";
+    private static final String ARG_REMOVE_BOOK = "removeBook";
     public BooksFragment() {
         // Required empty public constructor
     }
@@ -38,6 +40,14 @@ public class BooksFragment extends Fragment {
         BooksFragment fragment = new BooksFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_NEW_BOOK, book);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static BooksFragment newInstanceRemoveBook(Book book) {
+        BooksFragment fragment = new BooksFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_REMOVE_BOOK, book);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,8 +84,14 @@ public class BooksFragment extends Fragment {
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
         books = getActivity().getIntent().getParcelableArrayListExtra(EXTRA_BOOKS);
         if(getArguments() != null) {
-            Book newBook = getArguments().getParcelable(ARG_NEW_BOOK);
-            books.add(newBook);
+            if(getArguments().containsKey(ARG_NEW_BOOK)) {
+                Book newBook = getArguments().getParcelable(ARG_NEW_BOOK);
+                books.add(newBook);
+            }
+            else if(getArguments().containsKey(ARG_REMOVE_BOOK)) {
+                Book removeBook = getArguments().getParcelable(ARG_REMOVE_BOOK);
+                books.removeIf(book -> book.getBookId().equals(removeBook.getBookId()));
+            }
         }
     }
 

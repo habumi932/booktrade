@@ -1,6 +1,7 @@
 package com.hangbui.booktrade;
 
 public class TradeRequest {
+    private String requestId;
     private String senderId;
     private String senderName;
     private String senderUniversity;
@@ -11,7 +12,8 @@ public class TradeRequest {
     public TradeRequest() {
     }
 
-    public TradeRequest(String senderId, String senderName, String senderUniversity, String receiverId, String bookId, String status) {
+    public TradeRequest(String requestId, String senderId, String senderName, String senderUniversity, String receiverId, String bookId, String status) {
+        this.requestId = requestId;
         this.senderId = senderId;
         this.senderName = senderName;
         this.senderUniversity = senderUniversity;
@@ -66,5 +68,13 @@ public class TradeRequest {
 
     public void setSenderUniversity(String senderUniversity) {
         this.senderUniversity = senderUniversity;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 }

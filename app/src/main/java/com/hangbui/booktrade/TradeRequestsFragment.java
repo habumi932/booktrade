@@ -2,15 +2,19 @@ package com.hangbui.booktrade;
 
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_BOOK_ID;
+import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_OWNER_ID;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOK_REQUESTS_TABLE_COL_RECEIVER_ID;
 import static com.hangbui.booktrade.Constants.EXTRA_CURRENT_USER;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -100,12 +105,18 @@ public class TradeRequestsFragment extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             AlertDialog.Builder myBuilder = new AlertDialog.Builder(getActivity());
             TradeRequest request = tradeRequests.get(position);
+            Book thisBook = tradeRequestBooks.get(position);
             String message = request.getSenderName() + " from " + request.getSenderUniversity()
                     + " requested to borrow this book.";
             myBuilder
                     .setTitle("Book trade request")
                     .setMessage(message)
-                    .setPositiveButton("Accept", null)
+                    .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            acceptTradeRequest(request, thisBook);
+                        }
+                    })
                     .setNegativeButton("Decline", null);
             AlertDialog myDialog = myBuilder.create();
             myDialog.show();
@@ -123,6 +134,7 @@ public class TradeRequestsFragment extends Fragment {
                             ArrayList<TradeRequest> requests = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 TradeRequest request = document.toObject(TradeRequest.class);
+                                request.setRequestId(document.getId());
                                 requests.add(request);
                             }
                             updateTradeRequestsList(requests);
@@ -156,7 +168,7 @@ public class TradeRequestsFragment extends Fragment {
                                 Book theBook = document.toObject(Book.class);
                                 books.add(theBook);
                             }
-                            updateListviewBooks(books);
+                            updateListviewTradeRequestBooks(books);
                         } else {
                             Log.e("Book", "Error retrieving book info");
                         }
@@ -164,12 +176,55 @@ public class TradeRequestsFragment extends Fragment {
                 });
     }
 
-    private void updateListviewBooks(List<Book> books) {
+    private void updateListviewTradeRequestBooks(List<Book> books) {
         tradeRequestBooks = books;
         View view = getView();
         CustomAdapterBooks adapter = new CustomAdapterBooks(getActivity(), books);
         ListView listviewTradeRequests = view.findViewById(R.id.listview_trade_requests);
         listviewTradeRequests.setOnItemClickListener(listview_trade_request_itemClickListener);
         listviewTradeRequests.setAdapter(adapter);
+    }
+
+    private void acceptTradeRequest(TradeRequest request, Book book) {
+        String newOwnerId = request.getSenderId();
+        String bookId = book.getBookId();
+
+        db.collection(BOOKS_TABLE)
+                .document(bookId)
+                .update(BOOKS_TABLE_COL_OWNER_ID, newOwnerId)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            deleteTradeRequest(request, book);
+                        } else {
+                            Log.e("Book", "Error updating new owner id in books table");
+                        }
+                    }
+                });
+    }
+
+    private void deleteTradeRequest(TradeRequest request, Book book) {
+        String requestId = request.getRequestId();
+        db.collection(BOOK_REQUESTS_TABLE)
+                .document(requestId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Book request accepted, book removed from your profile",
+                                Toast.LENGTH_SHORT).show();
+                        replaceFragment(BooksFragment.newInstanceRemoveBook(book));
+                    }
+                });
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }
