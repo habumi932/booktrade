@@ -117,7 +117,12 @@ public class TradeRequestsFragment extends Fragment {
                             acceptTradeRequest(request, thisBook);
                         }
                     })
-                    .setNegativeButton("Decline", null);
+                    .setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            declineTradeRequest(request);
+                        }
+                    });
             AlertDialog myDialog = myBuilder.create();
             myDialog.show();
         }
@@ -214,9 +219,26 @@ public class TradeRequestsFragment extends Fragment {
                     public void onSuccess(Void unused) {
                         Toast.makeText(
                                 getActivity(),
-                                "Book request accepted, book removed from your profile",
+                                "Book trade request accepted, book removed from your profile",
                                 Toast.LENGTH_SHORT).show();
                         replaceFragment(BooksFragment.newInstanceRemoveBook(book));
+                    }
+                });
+    }
+
+    private void declineTradeRequest(TradeRequest request) {
+        String requestId = request.getRequestId();
+        db.collection(BOOK_REQUESTS_TABLE)
+                .document(requestId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Book trade request declined.",
+                                Toast.LENGTH_SHORT).show();
+                        getTradeRequests(currentUser.getId());
                     }
                 });
     }

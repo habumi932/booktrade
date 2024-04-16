@@ -3,6 +3,7 @@ package com.hangbui.booktrade;
 import static android.content.Intent.getIntent;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_AUTHORS;
+import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_BOOK_ID;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_DESCRIPTION;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_GENRE;
 import static com.hangbui.booktrade.Constants.BOOKS_TABLE_COL_NAME;
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,14 +99,16 @@ public class AddBookFragment extends Fragment {
             String genre,
             String description
     ) {
+        String bookId = UUID.randomUUID().toString().replace("-", "");
         Map<String, Object> book = new HashMap<>();
+        book.put(BOOKS_TABLE_COL_BOOK_ID, bookId);
         book.put(BOOKS_TABLE_COL_OWNER_ID, ownerId);
         book.put(BOOKS_TABLE_COL_NAME, name);
         book.put(BOOKS_TABLE_COL_AUTHORS, authors);
         book.put(BOOKS_TABLE_COL_GENRE, genre);
         book.put(BOOKS_TABLE_COL_DESCRIPTION, description);
 
-        FirebaseFirestore.getInstance().collection(BOOKS_TABLE).document()
+        FirebaseFirestore.getInstance().collection(BOOKS_TABLE).document(bookId)
                 .set(book)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
