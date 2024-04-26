@@ -12,6 +12,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -160,7 +162,15 @@ public class EditProfilePictureFragment extends Fragment {
                     @Override
                     public void onSuccess(Void unused) {
                         Toast.makeText(getActivity(), "Photo successfully saved.", Toast.LENGTH_SHORT).show();
+                        replaceFragment(ProfileFragment.newInstanceUpdatePhoto(photoUrl));
                     }
                 });
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
     }
 }

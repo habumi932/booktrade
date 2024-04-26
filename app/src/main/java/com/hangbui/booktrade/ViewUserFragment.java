@@ -152,10 +152,12 @@ public class ViewUserFragment extends Fragment {
         TextView textViewNumBooks = view.findViewById(R.id.textView_num_books);
         ImageView imageViewPhoto = view.findViewById(R.id.imageView_photo);
         Button addFriendButton = view.findViewById(R.id.button_add_friend_2);
-        String photoUrl = theUser.getPhotoUrl();
+        String profilePhotoUrl = theUser.getPhotoUrl();
 
-        if (!photoUrl.equals("")) {
-            Picasso.get().load(photoUrl).into(imageViewPhoto);
+        if(profilePhotoUrl.equals("")) {
+            imageViewPhoto.setImageResource(R.drawable.default_profile_pic);
+        } else {
+            Picasso.get().load(profilePhotoUrl).into(imageViewPhoto);
         }
         textViewName.setText(theUser.getName());
         textViewUniversity.setText(theUser.getUniversity());

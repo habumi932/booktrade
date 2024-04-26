@@ -196,6 +196,8 @@ public class TradeRequestsFragment extends Fragment {
     private void acceptTradeRequest(TradeRequest request, Book book) {
         String newOwnerId = request.getSenderId();
         String bookId = book.getBookId();
+        tradeRequests.remove(request);
+        tradeRequestBooks.remove(book);
 
         db.collection(BOOKS_TABLE)
                 .document(bookId)

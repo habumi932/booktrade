@@ -41,6 +41,9 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private static final String ARG_CURRENT_USER = "currentUser";
+    private static final String ARG_PHOTO_URL = "photoUrl";
+
+    private String photoUrl;
     private User currentUser;
     private List<Book> books;
 
@@ -52,6 +55,14 @@ public class ProfileFragment extends Fragment {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_CURRENT_USER, user);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static ProfileFragment newInstanceUpdatePhoto(String photoUrl) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PHOTO_URL, photoUrl);
         fragment.setArguments(args);
         return fragment;
     }
@@ -107,6 +118,10 @@ public class ProfileFragment extends Fragment {
         currentUser = getActivity().getIntent().getParcelableExtra(EXTRA_CURRENT_USER);
         books = getActivity().getIntent().getParcelableArrayListExtra(EXTRA_BOOKS);
         mAuth = FirebaseAuth.getInstance();
+        if (getArguments() != null) {
+            photoUrl = getArguments().getString(ARG_PHOTO_URL);
+            currentUser.setPhotoUrl(photoUrl);
+        }
     }
 
     @Override
