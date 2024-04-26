@@ -71,6 +71,12 @@ public class BooksFragment extends Fragment {
             replaceFragment(new AddBookFragment());
         }
     };
+    private View.OnClickListener button_search_books_onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            replaceFragment(new SearchBooksFragment());
+        }
+    };
     private View.OnClickListener button_trade_requests_onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -106,7 +112,9 @@ public class BooksFragment extends Fragment {
     public void onViewCreated (View view, Bundle savedInstanceState) {
         Button buttonAddBook = view.findViewById(R.id.button_add_book);
         Button tradeRequestsButton = view.findViewById(R.id.button_trade_requests);
+        Button searchBooksButton = view.findViewById(R.id.button_search_books);
         buttonAddBook.setOnClickListener(button_add_book_onClickListener);
+        searchBooksButton.setOnClickListener(button_search_books_onClickListener);
         tradeRequestsButton.setOnClickListener(button_trade_requests_onClickListener);
         updateListviewBooks(view);
     }

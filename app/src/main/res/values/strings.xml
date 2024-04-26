@@ -7,6 +7,7 @@
     <string name="button_edit_profile_picture">CHANGE PHOTO</string>
     <string name="button_history">HISTORY</string>
     <string name="button_add_book">ADD BOOK</string>
+    <string name="button_search_books">SEARCH BOOKS</string>
     <string name="button_trade_requests">TRADE REQUESTS</string>
     <string name="button_search_users">SEARCH USERS</string>
     <string name="button_add_friend">ADD FRIEND</string>
