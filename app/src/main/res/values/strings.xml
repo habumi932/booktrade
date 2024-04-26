@@ -28,6 +28,7 @@
     <string name="hint_university">University</string>
     <string name="hint_name">Name</string>
     <string name="hint_genre">Genre</string>
+    <string name="hint_only_show_friends_book">Only show books owned by friends</string>
     <string name="nav_bar_home">Home</string>
     <string name="nav_bar_settings">Settings</string>
     <string name="nav_bar_profile">Profile</string>

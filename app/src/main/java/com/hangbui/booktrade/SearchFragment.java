@@ -57,7 +57,7 @@ public class SearchFragment extends Fragment {
         @Override
         public void onClick(View view) {
             View thisView = getView();
-            TextView textviewEmail = thisView.findViewById(R.id.edittext_search_user_email);
+            TextView textviewEmail = thisView.findViewById(R.id.edittext_search_books_email);
             Spinner spinnerUniversity = thisView.findViewById(R.id.spinner_universities);
             String email = textviewEmail.getText().toString();
             String university = spinnerUniversity.getSelectedItem().toString();
