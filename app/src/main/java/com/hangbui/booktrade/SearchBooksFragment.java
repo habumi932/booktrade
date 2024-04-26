@@ -7,6 +7,18 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.opencsv.CSVReader;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,5 +72,72 @@ public class SearchBooksFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_books, container, false);
+    }
+
+    @Override
+    public void onViewCreated (View view, Bundle savedInstanceState) {
+        loadUniversities();
+        loadGenres();
+    }
+
+    private void loadGenres() {
+        // Read CSV file to get a list of all book genres
+        List<String> allGenres = new ArrayList<>();
+        try {
+            InputStream inputStream = getActivity().getAssets().open("book_genres.csv");
+            Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
+            CSVReader reader = new CSVReader(bReader);
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                String genre = nextLine[0];
+                allGenres.add(genre);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "The specified file was not found", Toast.LENGTH_SHORT).show();
+        }
+        allGenres.add(0, "All");
+        allGenres.add(0, "Select Genre");
+
+        // Populate spinner with the genres
+        String[] genres = new String[allGenres.size()];
+        genres = allGenres.toArray(genres);
+        Spinner genreSpinner = getView().findViewById(R.id.spinner_genres);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, genres);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genreSpinner.setAdapter(adapter);
+    }
+
+    private void loadUniversities() {
+        // Read CSV file to get a list of all US universities
+        List<String> allUniversities = new ArrayList<String>();
+        try {
+            InputStream inputStream = getActivity().getAssets().open("us_universities.csv");
+            Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
+            CSVReader reader = new CSVReader(bReader);
+            String[] nextLine;
+            int id = 0;
+            while ((nextLine = reader.readNext()) != null) {
+                String university = nextLine[0];
+                allUniversities.add(university);
+            }
+            // Remove first element which is the column name
+            allUniversities.remove(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "The specified file was not found", Toast.LENGTH_SHORT).show();
+        }
+        allUniversities.add(0, "All");
+        allUniversities.add(0, "Select University");
+
+        // Populate spinner with the university names
+        String[] universities = new String[allUniversities.size()];
+        universities = allUniversities.toArray(universities);
+        Spinner uniSpinner = getView().findViewById(R.id.spinner_universities);
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, universities);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uniSpinner.setAdapter(adapter);
     }
 }

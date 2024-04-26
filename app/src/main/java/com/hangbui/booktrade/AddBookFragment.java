@@ -30,8 +30,15 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.opencsv.CSVReader;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -82,8 +89,25 @@ public class AddBookFragment extends Fragment {
     @Override
     public void onViewCreated (View view, Bundle savedInstanceState) {
         Spinner spinnerGenre = view.findViewById(R.id.spinner_genre);
-        // TODO: Create genre list for spinner
-        String[] genres = {"Fiction novel", "Thriller", "Romance"};
+        // Read CSV file to get a list of all book genres
+        List<String> allGenres = new ArrayList<>();
+        try {
+            InputStream inputStream = getActivity().getAssets().open("book_genres.csv");
+            Reader bReader = new BufferedReader(new InputStreamReader(inputStream));
+            CSVReader reader = new CSVReader(bReader);
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                String genre = nextLine[0];
+                allGenres.add(genre);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "The specified file was not found", Toast.LENGTH_SHORT).show();
+        }
+
+        // Populate spinner with the genres
+        String[] genres = new String[allGenres.size()];
+        genres = allGenres.toArray(genres);
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, genres);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
