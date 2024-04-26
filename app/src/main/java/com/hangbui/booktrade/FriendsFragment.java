@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class FriendsFragment extends Fragment {
     private FirebaseFirestore db;
-    private List<String> friendIds;
+    private ArrayList<String> friendIds;
 
     private static final String ARG_NEW_FRIEND_ID = "newFriendId";
     // TODO: Rename and change types of parameters
@@ -79,6 +79,7 @@ public class FriendsFragment extends Fragment {
         if (getArguments() != null) {
             friendId = getArguments().getString(ARG_NEW_FRIEND_ID);
             friendIds.add(friendId);
+            getActivity().getIntent().putStringArrayListExtra(EXTRA_FRIEND_IDS, friendIds);
         }
     }
 
