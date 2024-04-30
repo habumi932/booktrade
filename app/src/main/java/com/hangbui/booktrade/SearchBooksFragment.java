@@ -246,6 +246,11 @@ public class SearchBooksFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                searchBooksResults.clear();
+                                updateListViewBooks(searchBooksResults);
+                                return;
+                            }
                             ArrayList<String> userIds = new ArrayList<>();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 User user = document.toObject(User.class);
@@ -266,7 +271,8 @@ public class SearchBooksFragment extends Fragment {
                 .whereIn(BOOKS_TABLE_COL_OWNER_ID, userIds);
         if (!genre.equals("")
                 && !genre.equals("Select Genre")
-                && !genre.equals("All")) {
+                && !genre.equals("All")
+        ) {
             query = query.whereEqualTo(BOOKS_TABLE_COL_GENRE, genre);
         }
         query.get()
